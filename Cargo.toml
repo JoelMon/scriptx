@@ -3,12 +3,15 @@ name = "scriptx"
 version = "0.1.0"
 authors = ["Joel Montes de Oca <no-email>"]
 edition = "2018"
-description = "A program to cut verses from American Sign Language version of the New World Translation Bible."
+description = "ls"
+repository = "https://github.com/JoelMon/scriptx"
 readme = "README.md"
 license = "GPL3.0"
 license-file = "LICENSE.md"
 keywords = ["cli", "nwt", "bible", "ffmpeg", "jehovah-witness"]
 categories = ["command-line-utilities"]
+[badges]
+maintenance = { status = "actively-developed" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
