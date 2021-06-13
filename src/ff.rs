@@ -2,20 +2,26 @@
 /*!
 ffprpbe & ffmpeg wrapper for the ScriptX project
 
-ScriptX is a program to cut out verses from the [American Sign Language Bible](https://www.jw.org/ase/library/bible/nwt/books/) published by Watch Tower Bible and Tract Society of Pennsylvania in order to aid in showing specific scripture verses without having to work with an entire chapter.
+ScriptX is a program to cut out verses from the [American Sign Language Bible](https://www.jw.org/ase/library/bible/nwt/books/) 
+published by Watch Tower Bible and Tract Society of Pennsylvania in order to aid in showing specific scripture verses without 
+having to work with an entire chapter.
 
 An example of use would be to create a playlist for the use during a congregation meeting or for study.
 
-This module is a simple wrapper for [ffprobe](https://ffmpeg.org/ffprobe.html) and [ffmpeg](https://ffmpeg.org/). These two tools must be installed on the system in order for ScriptX to work.
+This module is a simple wrapper for [ffprobe](https://ffmpeg.org/ffprobe.html) and [ffmpeg](https://ffmpeg.org/). 
+These two tools must be installed on the system in order for ScriptX to work.
 */
 
 use regex::Regex;
 use std::process::Command;
 
-/**
-ffprobe wrapper
+/** ffprobe wrapper
 
-This module is a wrapper for the [ffprobe](https://ffmpeg.org/ffprobe.html) tool. It gathers relevant information needed for ScriptX function, for example, it is charged with collecting and returning chapter information such as the *start* and *end* time stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut out specific verses from the video file.
+This module is a wrapper for the [ffprobe](https://ffmpeg.org/ffprobe.html) tool.
+It gathers relevant information needed for ScriptX function, for example, it is charged
+with collecting and returning chapter information such as the *start* and *end* time
+stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut out
+specific verses from the video file.
 */
 pub mod probe {
     use core::str;
@@ -34,7 +40,8 @@ pub mod probe {
     /**
     The struct for the chapter
 
-    Contains information for each chapter within a video file. Also contains the `Tags` scruct.
+    Contains information for each chapter within a video file. Also contains the `Tags` scruct. Specifically the
+    _start_time_ and _end_time_ are used from this vector.
     */
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -54,12 +61,13 @@ pub mod probe {
 
     The *title* field is used to determine the chapter that contains the verse(s) being searched for.
 
-    For example, if the verse *John 3:16* needs to be found, searching the title fields will result in the correct chapter struct which also contains additional information needed to cut the verse.
+    For example, if the verse *John 3:16* needs to be found, searching the title fields will result in
+    the correct chapter struct which also contains additional information needed to cut the verse.
     */
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Tags {
-        pub title: String,
+        pub title: String, // The verse(s) being search for is compared to this field.
     }
 
     impl Root {
@@ -119,12 +127,18 @@ pub mod probe {
             }
             unreachable!()
         }
-        /// Returns the prefix needed.
-        fn get_prefix(&self) -> &str {
-            // let title = self.get_last_title();
-            // let prefix = self.find_prefix(title);
-            // prefix
 
+        /** Returns the prefix needed to complete the title being searched for.
+         *
+         * In order to avoid the user from having to type the complete title of the chapter being
+         * searched, this method finds the prefix of the chapter so the user doesn't have to add it
+         * when using the `-v` option.
+         *
+         * The method searches for all text up to and including the ':'. For example, the title
+         * _Joel 1:2_ would match and return the Joel 1:_ as a &str. The prefix is then combined
+         * with the verse the user wants.
+         */
+        fn get_prefix(&self) -> &str {
             let last_chapter = *&self.chapters.last().unwrap();
             let title = last_chapter.tags.title.as_str();
 
@@ -135,11 +149,12 @@ pub mod probe {
                 Some(prefix) => {
                     return prefix.get(1).unwrap().as_str();
                 }
-                None => panic!("THE PREFIX WAS NOT FOUND!"),
+                None => panic!("The prefix pattern was not found."),
             };
         }
     }
 }
+
 /**
 ffmpeg wrapper
 

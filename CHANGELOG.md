@@ -1,5 +1,12 @@
 # Changelog
 
+## ScriptX [v0.2.1](https://github.com/JoelMon/scriptx/releases/tag/v0.2.1) (2021-6-13)
+
+### Improvements
+- Improved the documentation for the new methods created for v0.2.0 and a few others.
+- Changed the panic message if the pattern for a title isn't found.
+- Close #8 - Added logic to determin if `ffprobe` and `ffmpeg` are installed.
+
 ## ScriptX [v0.2.0](https://github.com/JoelMon/scriptx/releases/tag/v0.2.0) (2021-6-13)
 
 ### Added
