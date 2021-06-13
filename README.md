@@ -5,10 +5,15 @@ ScriptX is still in early stages and may change dramatically in future versions.
 
 ## Installation
 
+### Dependencies 
+Both `ffmpeg` and `ffprobe` has to be installed on the system.
+
 ### Using Cargo
 `$ cargo install scriptx`
 
 ## Usage
+
+
 ```bash
 USAGE:
     scriptx [OPTIONS] --file <file> --verse <verse>
