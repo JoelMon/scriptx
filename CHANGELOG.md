@@ -1,5 +1,17 @@
 # Changelog
 
+## ScriptX [v0.2.0](https://github.com/JoelMon/scriptx/releases/tag/v0.2.0) (2021-6-13)
+
+### Added
+- Added `*.m4v` to the `.gitignore` file to ignore any test videos used during development and test.
+
+### Fixes
+- Fixed #7 - Improved the description field within `Cargo.toml`.
+
+### Implemented
+- Implemented #2 - ScriptX figures out the book of the Bible and chapter it is parsing automaticly. The user no longer has to type `-v "Joel 1:1"`. Now the verse can be included without the name of the book or chapter, for example, the following is now valid when the book of Joel chapter 1 is used: `-v 1` will export _Joel 1:1_.
+
+
 ## ScriptX [v0.1.2](https://github.com/JoelMon/scriptx/releases/tag/v0.1.2) (2021-6-13)
 
 ## Fixed

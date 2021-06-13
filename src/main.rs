@@ -39,6 +39,7 @@ fn main() {
     let path = matches.value_of("file").unwrap();
     let verse = matches.value_of("verse").unwrap();
     let output_path = matches.value_of("output_path").unwrap();
+
     let (start_time, end_time) = probe::Root::new(path).verse(verse);
 
     mpeg::cut(start_time, end_time, path, output_path);

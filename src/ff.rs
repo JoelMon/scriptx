@@ -9,6 +9,7 @@ An example of use would be to create a playlist for the use during a congregatio
 This module is a simple wrapper for [ffprobe](https://ffmpeg.org/ffprobe.html) and [ffmpeg](https://ffmpeg.org/). These two tools must be installed on the system in order for ScriptX to work.
 */
 
+use regex::Regex;
 use std::process::Command;
 
 /**
@@ -17,6 +18,8 @@ ffprobe wrapper
 This module is a wrapper for the [ffprobe](https://ffmpeg.org/ffprobe.html) tool. It gathers relevant information needed for ScriptX function, for example, it is charged with collecting and returning chapter information such as the *start* and *end* time stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut out specific verses from the video file.
 */
 pub mod probe {
+    use core::str;
+
     use serde::{Deserialize, Serialize};
     /**
     The top most, or *root*, level of the scruct
@@ -90,7 +93,7 @@ pub mod probe {
 
         // Returns the *start* and *end* time for the verse passed in.
         pub fn verse(&self, verse: &str) -> (f64, f64) {
-            self.find_times(self.find_verse_id(verse))
+            self.find_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
         }
 
         /** Searches for the title of the verse and returns the ``id`` of the chapter the title is found
@@ -115,6 +118,25 @@ pub mod probe {
                 }
             }
             unreachable!()
+        }
+        /// Returns the prefix needed.
+        fn get_prefix(&self) -> &str {
+            // let title = self.get_last_title();
+            // let prefix = self.find_prefix(title);
+            // prefix
+
+            let last_chapter = *&self.chapters.last().unwrap();
+            let title = last_chapter.tags.title.as_str();
+
+            let pattern = super::Regex::new(r"(^[\s\S]*:)").unwrap();
+            let prefix = pattern.captures(title);
+
+            match prefix {
+                Some(prefix) => {
+                    return prefix.get(1).unwrap().as_str();
+                }
+                None => panic!("THE PREFIX WAS NOT FOUND!"),
+            };
         }
     }
 }
