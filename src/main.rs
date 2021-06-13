@@ -8,7 +8,7 @@ use ff::{mpeg, probe};
 fn main() {
     let matches = App::new("ScriptX")
         .author(crate_authors!())
-        .about("This application cuts scriptures")
+        .about("ScriptX cuts scriptures from the American Sign Language version of the New World Translation Bible.")
         .version(crate_version!())
         .arg(
             Arg::with_name("verse")

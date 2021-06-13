@@ -1,5 +1,12 @@
 # Changelog
 
+## ScriptX [v0.1.2](https://github.com/JoelMon/scriptx/releases/tag/v0.1.2) (2021-6-13)
+
+## Fixed
+Fixed #4 - Replaced the application's `--help` short description to:
+
+> ScriptX cuts scriptures from the American Sign Language version of the New World Translation Bible.
+
 ## ScriptX [v0.1.1](https://github.com/JoelMon/scriptx/releases/tag/v0.1.1) (2021-6-13)
 
 ### Added
