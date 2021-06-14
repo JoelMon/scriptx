@@ -1,11 +1,25 @@
 # Changelog
 
+## ScriptX [v0.2.2](https://github.com/JoelMon/scriptx/releases/tag/v0.2.1) (2021-6-14)
+
+### Fixed
+- Fixed spelling in `CHANGELOG.md`.
+- Fixed spelling in `ff.rs`.
+- Removed `mod ff` from within `main.sr`.
+
+### Improvements
+- Added comment to the regular expression code.
+- Close #11 - Added tests to public API in ff module.
+- Improved the documentation within the `ff`library.
+- Added `[lib]` pointing to `ff.rs`.
+  - Now `cargo test` will include doc tests.
+
 ## ScriptX [v0.2.1](https://github.com/JoelMon/scriptx/releases/tag/v0.2.1) (2021-6-13)
 
 ### Improvements
 - Improved the documentation for the new methods created for v0.2.0 and a few others.
 - Changed the panic message if the pattern for a title isn't found.
-- Close #8 - Added logic to determin if `ffprobe` and `ffmpeg` are installed.
+- Close #8 - Added logic to determine if `ffprobe` and `ffmpeg` are installed.
 
 ## ScriptX [v0.2.0](https://github.com/JoelMon/scriptx/releases/tag/v0.2.0) (2021-6-13)
 
@@ -16,7 +30,7 @@
 - Fixed #7 - Improved the description field within `Cargo.toml`.
 
 ### Implemented
-- Implemented #2 - ScriptX figures out the book of the Bible and chapter it is parsing automaticly. The user no longer has to type `-v "Joel 1:1"`. Now the verse can be included without the name of the book or chapter, for example, the following is now valid when the book of Joel chapter 1 is used: `-v 1` will export _Joel 1:1_.
+- Implemented #2 - ScriptX figures out the book of the Bible and chapter it is parsing automatically. The user no longer has to type `-v "Joel 1:1"`. Now the verse can be included without the name of the book or chapter, for example, the following is now valid when the book of Joel chapter 1 is used: `-v 1` will export _Joel 1:1_.
 
 
 ## ScriptX [v0.1.2](https://github.com/JoelMon/scriptx/releases/tag/v0.1.2) (2021-6-13)
@@ -42,5 +56,5 @@
 
 
 ## ScriptX [v0.1.0](https://github.com/JoelMon/scriptx/releases/tag/v0.1.0) (2021-6-12)
-Inital release of [ScriptX](https://joelmon.github.io/scriptx/).
+Initial release of [ScriptX](https://joelmon.github.io/scriptx/).
 

@@ -2,13 +2,13 @@
 /*!
 ffprpbe & ffmpeg wrapper for the ScriptX project
 
-ScriptX is a program to cut out verses from the [American Sign Language Bible](https://www.jw.org/ase/library/bible/nwt/books/) 
-published by Watch Tower Bible and Tract Society of Pennsylvania in order to aid in showing specific scripture verses without 
+ScriptX is a program to cut out verses from the [American Sign Language Bible](https://www.jw.org/ase/library/bible/nwt/books/)
+published by Watch Tower Bible and Tract Society of Pennsylvania in order to aid in showing specific scripture verses without
 having to work with an entire chapter.
 
 An example of use would be to create a playlist for the use during a congregation meeting or for study.
 
-This module is a simple wrapper for [ffprobe](https://ffmpeg.org/ffprobe.html) and [ffmpeg](https://ffmpeg.org/). 
+This module is a simple wrapper for [ffprobe](https://ffmpeg.org/ffprobe.html) and [ffmpeg](https://ffmpeg.org/).
 These two tools must be installed on the system in order for ScriptX to work.
 */
 
@@ -28,55 +28,85 @@ pub mod probe {
 
     use serde::{Deserialize, Serialize};
     /**
-    The top most, or *root*, level of the scruct
+    The top most, or *root*, level of the struct
 
-    It contains a single scruct of vector type which is a collection of all the chapters contained within the video file.
+    It contains a single struct of vector type which is a collection of all the chapters contained within the video file.
      */
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Root {
+        /// The `chapters` fields contains a vector of the type `Chapter` struct.
         pub chapters: Vec<Chapter>,
     }
     /**
     The struct for the chapter
 
-    Contains information for each chapter within a video file. Also contains the `Tags` scruct. Specifically the
-    _start_time_ and _end_time_ are used from this vector.
+    Contains information for each chapter within a video file. Also contains the `Tags` struct. Specifically the
+    _start_time_ and _end_time_ are used from this struct.
     */
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Chapter {
+        /// The `id` field that uniquely identifies each chapter.
         pub id: i64,
+        /// The `time_base` field.
         #[serde(rename = "time_base")]
         pub time_base: String,
+        /// The `start` field.
         pub start: i64,
+        /**
+        The `start_time` field.
+        This field contains the start time for the chapter.
+        */
         #[serde(rename = "start_time")]
         pub start_time: String,
+        /// The `end` field.
         pub end: i64,
         #[serde(rename = "end_time")]
+        /**
+        The `end_time` field.
+        This field contains the end time for the chapter.
+        */
         pub end_time: String,
+        ///The `Tags` field.
         pub tags: Tags,
     }
-    /** Contains the title for each chapter
+
+    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    /** Contains the title field for each chapter.
 
     The *title* field is used to determine the chapter that contains the verse(s) being searched for.
 
     For example, if the verse *John 3:16* needs to be found, searching the title fields will result in
     the correct chapter struct which also contains additional information needed to cut the verse.
     */
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-    #[serde(rename_all = "camelCase")]
     pub struct Tags {
-        pub title: String, // The verse(s) being search for is compared to this field.
+        /**
+        The title field for each chapter.
+
+        The `verse` function searches this field when looking for
+        the verse, for example `Ps. 83:13`, needed.
+        */
+        pub title: String,
     }
 
     impl Root {
-        /** Returns the Root sctruct when given a path
+        /**
+        Returns the Root struct when given a path to a video file.
 
-        # Example
-        ```rust
+        The `new` function initializes a new chapter video to be worked with.
+        The function parses the meta data of the video with [ffprobe](https://ffmpeg.org/ffprobe.html)
+        and returns the `Root` struct which contains all the chapter information needed
+        for cutting the scriptures.
+
+        ## Example
+        For example, if you want to load chapter 3 of the book of John
+        to process it, you would do the following:
+
+        ```rust, ignore
         use ff::probe;
-        probe::probe(String::from("video-file.m4v"));
+        let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
         ```
         */
         pub fn new(path: &str) -> Root {
@@ -99,7 +129,50 @@ pub mod probe {
             c
         }
 
-        // Returns the *start* and *end* time for the verse passed in.
+        /**
+        Returns the *start* and *end* time for the verse passed in.
+
+        The `verse_times` method takes a verse and returns the *start* and *end* times
+        for the verse passed in.
+
+        ## Example
+
+        ```rust, ignore
+        # let chapter: Root = Root {
+        #     chapters: {
+        #         vec![
+        #             Chapter {
+        #                id: 16,
+        #                 time_base: String::from("1/1000"),
+        #                 start: 197597,
+        #                 start_time: String::from("197.597000"),
+        #                 end: 226259,
+        #                 end_time: String::from("226.259000"),
+        #                 tags: Tags {
+        #                     title: String::from("John 3:16"),
+        #                 },
+        #             },
+        #             Chapter {
+        #                 id: 17,
+        #                 time_base: String::from("1/1000"),
+        #                 start: 197597,
+        #                 start_time: String::from("226.259000"),
+        #                 end: 241908,
+        #                 end_time: String::from("241.908000"),
+        #                 tags: Tags {
+        #                     title: String::from("John 3:17"),
+        #                 },
+        #             },
+        #         ]
+        #     }
+        # };
+        use ff::probe;
+        let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
+        // The `start_time` and `end_time` for _John 3:16_ are (197.597, 226.259).
+        assert_eq!(chapter.verse("16"), (197.597, 226.259)); // Returned the `start_time` and `end_time`.
+        ```
+
+         */
         pub fn verse(&self, verse: &str) -> (f64, f64) {
             self.find_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
         }
@@ -142,7 +215,7 @@ pub mod probe {
             let last_chapter = *&self.chapters.last().unwrap();
             let title = last_chapter.tags.title.as_str();
 
-            let pattern = super::Regex::new(r"(^[\s\S]*:)").unwrap();
+            let pattern = super::Regex::new(r"(^[\s\S]*:)").unwrap(); // Regular expression to find the prefix (ig. 'Joel 1:') of a `title`. See https://regexr.com/5vus6
             let prefix = pattern.captures(title);
 
             match prefix {
@@ -166,7 +239,7 @@ pub mod mpeg {
     Cuts the video out at specific *start* and *end* times.
 
     # Example
-    ```rust
+    ```rust, ignore
     use ff:mpeg;
     mpeg::cut(23.32342, 50.234234, String::from("video-file.m4v")); // Slices the given video at the given time stamp and outputs to *output.mp4*.
     ```
@@ -195,5 +268,99 @@ pub mod mpeg {
             start_time.to_string(),
             end_time.to_string()
         );
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::probe::*;
+
+    #[test]
+    fn test_verse() {
+        let root = init_struct_1();
+        assert_eq!(root.verse("16"), (197.597, 226.259));
+        assert_eq!(root.verse("17"), (226.259, 241.908));
+        assert_eq!(root.verse("25"), (358.658, 374.741));
+        assert_eq!(root.verse("26"), (374.741, 394.561));
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_verse_not_found() {
+        let root = init_struct_1();
+        assert_eq!(root.verse("27"), (197.597, 226.259));
+    }
+
+    /* Structure of the structs used in ff::probe
+
+    struct Root {
+        chapters: Vec<Chapter>,
+    }
+    struct Chapter {
+        id: i64,
+        time_base: String,
+        start: i64,
+        start_time: String,
+        end: i64,
+        end_time: String,
+        tags: Tags,
+    }
+    pub struct Tags {
+        title: String, // The verse(s) being search for is compared to this field.
+    }
+    */
+    fn init_struct_1() -> Root {
+        let root_struct: Root = Root {
+            chapters: {
+                vec![
+                    Chapter {
+                        id: 16,
+                        time_base: String::from("1/1000"),
+                        start: 197597,
+                        start_time: String::from("197.597000"),
+                        end: 226259,
+                        end_time: String::from("226.259000"),
+                        tags: Tags {
+                            title: String::from("John 3:16"),
+                        },
+                    },
+                    Chapter {
+                        id: 17,
+                        time_base: String::from("1/1000"),
+                        start: 197597,
+                        start_time: String::from("226.259000"),
+                        end: 241908,
+                        end_time: String::from("241.908000"),
+                        tags: Tags {
+                            title: String::from("John 3:17"),
+                        },
+                    },
+                    Chapter {
+                        id: 25,
+                        time_base: String::from("1/1000"),
+                        start: 358658,
+                        start_time: String::from("358.658000"),
+                        end: 374741,
+                        end_time: String::from("374.741000"),
+                        tags: Tags {
+                            title: String::from("John 3:25"),
+                        },
+                    },
+                    Chapter {
+                        id: 26,
+                        time_base: String::from("1/1000"),
+                        start: 374741,
+                        start_time: String::from("374.741000"),
+                        end: 394561,
+                        end_time: String::from("394.561000"),
+                        tags: Tags {
+                            title: String::from("John 3:26"),
+                        },
+                    },
+                ]
+            },
+        };
+
+        root_struct
     }
 }

@@ -4,7 +4,7 @@ use core::str;
 use std::process::Command;
 
 use clap::{crate_authors, crate_version, App, Arg};
-mod ff;
+
 use ff::{mpeg, probe};
 
 /// ScriptX - A Sign Language Bible verse slicer.

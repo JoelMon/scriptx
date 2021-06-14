@@ -1,6 +1,6 @@
 [package]
 name = "scriptx"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
 edition = "2018"
@@ -15,6 +15,10 @@ categories = ["command-line-utilities"]
 maintenance = { status = "actively-developed" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "ff"
+path = "src/ff.rs"
 
 [dependencies]
 clap = "2.33"
