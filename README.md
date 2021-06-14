@@ -3,6 +3,8 @@ ScriptX is a command line program designed to cut specific verses out of the Ame
 
 ScriptX is still in early stages and may change dramatically in future versions.
 
+![scriptx-demo](https://user-images.githubusercontent.com/6587811/121826488-e6cf6400-cc85-11eb-8604-39dc87910e08.gif)
+
 ## Installation
 
 ### Dependencies 
