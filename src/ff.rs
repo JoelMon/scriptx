@@ -242,7 +242,7 @@ pub mod mpeg {
     # Example
     ```rust, ignore
     use ff:mpeg;
-    mpeg::cut(23.32342, 50.234234, String::from("video-file.m4v")); // Slices the given video at the given time stamp and outputs to *output.mp4*.
+    mpeg::cut(23.32342, 50.234234, "nwt_43_Joh_ASL_03_r720P.mp4", "John_3-5.mp4"); // Slices the given video at the given time stamp and outputs to *John_3-5.mp4*.
     ```
     */
     pub fn cut(start_time: f64, end_time: f64, path: &str, output: &str) {

@@ -1,13 +1,16 @@
 # Changelog
 
-
 ## ScriptX [v0.2.3](https://github.com/JoelMon/scriptx/releases/tag/v0.2.3) (2021-6-15)
 
 ### Fixed
 - Fixed the doc test for the method `verse`.
 - Fixed the CHANGELOG entry for ScriptX [v0.2.2](https://github.com/JoelMon/scriptx/releases/tag/v0.2.2) (2021-6-14). The link was pointing to the `v0.2.1` instead of `v0.2.2` tag.
+- Updated the code example for `ff::mpeg::cut`.
+
+### Improvements
+- Improved some the text found in code examples.
   
-  
+
 ## ScriptX [v0.2.2](https://github.com/JoelMon/scriptx/releases/tag/v0.2.2) (2021-6-14)
 
 ### Fixed
