@@ -137,7 +137,9 @@ pub mod probe {
 
         ## Example
 
-        ```rust, ignore
+        ```rust,
+        use ff::probe;
+        # use ff::probe::{Root, Chapter, Tags};
         # let chapter: Root = Root {
         #     chapters: {
         #         vec![
@@ -166,9 +168,8 @@ pub mod probe {
         #         ]
         #     }
         # };
-        use ff::probe;
-        let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
-        // The `start_time` and `end_time` for _John 3:16_ are (197.597, 226.259).
+
+        // let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
         assert_eq!(chapter.verse("16"), (197.597, 226.259)); // Returned the `start_time` and `end_time`.
         ```
 
