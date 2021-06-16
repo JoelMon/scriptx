@@ -3,6 +3,7 @@ name = "scriptx"
 version = "0.2.2"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
+documentation = "https://docs.rs/scriptx"
 edition = "2018"
 description = "ScriptX is a command line tool to cut scriptures out of the American Sign Language version of the New World Translation."
 repository = "https://github.com/JoelMon/scriptx"

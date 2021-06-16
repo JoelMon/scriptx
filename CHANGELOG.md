@@ -10,6 +10,7 @@
 
 ### Improvements
 - Improved some the text found in code examples.
+- Added the `documentation` field to the `Cargo.toml` file.
 
 ### Changes
 - Switched from GLP3 license to the MIT license.
