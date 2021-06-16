@@ -1,6 +1,6 @@
 [package]
 name = "scriptx"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
 documentation = "https://docs.rs/scriptx"

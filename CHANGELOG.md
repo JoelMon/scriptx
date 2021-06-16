@@ -14,7 +14,6 @@
 
 ### Changes
 - Switched from GLP3 license to the MIT license.
-  
 
 ## ScriptX [v0.2.2](https://github.com/JoelMon/scriptx/releases/tag/v0.2.2) (2021-6-14)
 
@@ -48,7 +47,6 @@
 ### Implemented
 - Implemented #2 - ScriptX figures out the book of the Bible and chapter it is parsing automatically. The user no longer has to type `-v "Joel 1:1"`. Now the verse can be included without the name of the book or chapter, for example, the following is now valid when the book of Joel chapter 1 is used: `-v 1` will export _Joel 1:1_.
 
-
 ## ScriptX [v0.1.2](https://github.com/JoelMon/scriptx/releases/tag/v0.1.2) (2021-6-13)
 
 ## Fixed
@@ -67,9 +65,6 @@
 
 ### Fixed
 - Fixed [#4](https://github.com/JoelMon/scriptx/issues/4) - Fixed the *description* string within the `Cargo.toml` file. [[c59bfd]](https://github.com/JoelMon/scriptx/commit/a385adeab40a1742435a9278679ae2c153c59bfd)
-
-
-
 
 ## ScriptX [v0.1.0](https://github.com/JoelMon/scriptx/releases/tag/v0.1.0) (2021-6-12)
 Initial release of [ScriptX](https://joelmon.github.io/scriptx/).
