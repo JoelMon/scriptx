@@ -45,7 +45,7 @@ OPTIONS:
 ```
  
 ## Contributing
-Pull requests are welcome. For major changes or if unsure about a contribution, please open an [issue](https://github.com/JoelMon/scriptx/issues) fist to discuss what you would like to change.
+Pull requests are welcome. For major changes or if unsure about a contribution, please open an [issue](https://github.com/JoelMon/scriptx/issues) first to discuss what you would like to change.
 
 Please, also remember to run tests to make sure everything is okay.
 
