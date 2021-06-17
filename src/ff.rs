@@ -27,6 +27,8 @@ pub mod probe {
     use core::str;
 
     use serde::{Deserialize, Serialize};
+
+    use crate::errors::Errors;
     /**
     The top most, or *root*, level of the struct
 
@@ -109,7 +111,7 @@ pub mod probe {
         let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
         ```
         */
-        pub fn new(path: &str) -> Root {
+        pub fn new(path: &str) -> Result<Root, Errors> {
             let probe = super::Command::new("ffprobe")
                 .arg("-v")
                 .arg("quiet")
@@ -122,11 +124,16 @@ pub mod probe {
                 .unwrap();
 
             if !probe.status.success() {
-                panic!("ffprobe's exit status was FAILURE");
+                eprint!(
+                    "The file, {}, was not found by ffprobe. Check path and try again. ",
+                    path
+                );
+                return Err(Errors::FileError);
             }
 
-            let c: Root = serde_json::from_slice(&probe.stdout).expect("Something went wrong");
-            c
+            let c: Root =
+                serde_json::from_slice(&probe.stdout).expect("Error during JSON parsing of file.");
+            Ok(c)
         }
 
         /**
@@ -269,6 +276,29 @@ pub mod mpeg {
             start_time.to_string(),
             end_time.to_string()
         );
+    }
+}
+
+/// Module that contains error types.
+mod errors {
+    use core::fmt;
+
+    #[derive(Debug)]
+    pub enum Errors {
+        /// Errors dealing with file read or write errors.
+        FileError,
+        ParsingError,
+    }
+
+    impl std::error::Error for Errors {}
+
+    impl std::fmt::Display for Errors {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            match self {
+                Errors::FileError => write!(f, "FileError:"),
+                Errors::ParsingError => write!(f, "ParsingError:"),
+            }
+        }
     }
 }
 

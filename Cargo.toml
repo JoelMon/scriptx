@@ -1,6 +1,6 @@
 [package]
 name = "scriptx"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
 documentation = "https://docs.rs/scriptx"
@@ -11,10 +11,6 @@ readme = "README.md"
 license = "MIT"
 keywords = ["cli", "nwt", "bible", "ffmpeg", "jehovah-witness"]
 categories = ["command-line-utilities"]
-[badges]
-maintenance = { status = "actively-developed" }
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
 name = "ff"

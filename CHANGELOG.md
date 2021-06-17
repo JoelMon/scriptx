@@ -1,5 +1,21 @@
 # Changelog
 
+## ScriptX [v0.2.4](https://github.com/JoelMon/scriptx/releases/tag/v0.2.4) (2021-6-17)
+
+### Improvements
+- Added doc.rs and repo status badges. [100b78a](https://github.com/JoelMon/scriptx/commit/100b78ae9b6fbf78b1786d28b1ffa8e62d81ef9d#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5)
+- Added information about dependencies on the `README.md`.
+
+#### Error Handling
+- Improved error handling when checking for dependency.
+- Improved error handling when file path is incorrect.
+- Improved overall error messages.
+
+### Other
+- Added `.mp4` video files to the `.gitignore` file to avoid pushing test video files to repository.
+- Set the default output file to a `.m4v` container.  
+- Removed deprecated badges from `Cargo.toml`.
+
 ## ScriptX [v0.2.3](https://github.com/JoelMon/scriptx/releases/tag/v0.2.3) (2021-6-16)
 
 ### Fixed
