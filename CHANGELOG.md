@@ -1,5 +1,14 @@
 # Changelog
 
+
+## ScriptX [v0.3.0](https://github.com/JoelMon/scriptx/releases/tag/v0.3.0) (2021-6-17)
+
+### New Feature
+- Close #9 - Added ability to cut a range of scriptures.
+
+### Improvements
+- Updated the help menu to include the new range feature and updated other options.
+
 ## ScriptX [v0.2.4](https://github.com/JoelMon/scriptx/releases/tag/v0.2.4) (2021-6-17)
 
 ### Improvements

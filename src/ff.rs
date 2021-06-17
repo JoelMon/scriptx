@@ -15,6 +15,11 @@ These two tools must be installed on the system in order for ScriptX to work.
 use regex::Regex;
 use std::process::Command;
 
+enum VerseKind {
+    SingleVerse,
+    RangeVerse,
+}
+
 /** ffprobe wrapper
 
 This module is a wrapper for the [ffprobe](https://ffmpeg.org/ffprobe.html) tool.
@@ -24,11 +29,11 @@ stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut 
 specific verses from the video file.
 */
 pub mod probe {
-    use core::str;
+    use core::{f64, str};
 
     use serde::{Deserialize, Serialize};
 
-    use crate::errors::Errors;
+    use crate::{errors::Errors, VerseKind};
     /**
     The top most, or *root*, level of the struct
 
@@ -182,7 +187,30 @@ pub mod probe {
 
          */
         pub fn verse(&self, verse: &str) -> (f64, f64) {
-            self.find_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
+            let kind: VerseKind = verse_kind(verse);
+            match kind {
+                VerseKind::SingleVerse => self.find_times(
+                    self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()),
+                ),
+                VerseKind::RangeVerse => {
+                    let range: (&str, &str) = range_split(verse);
+                    let start_time: f64 = self
+                        .find_times(
+                            self.find_verse_id(
+                                format!("{}{}", self.get_prefix(), range.0).as_str(),
+                            ),
+                        )
+                        .0;
+                    let end_time: f64 = self
+                        .find_times(
+                            self.find_verse_id(
+                                format!("{}{}", self.get_prefix(), range.1).as_str(),
+                            ),
+                        )
+                        .1;
+                    return (start_time, end_time);
+                }
+            }
         }
 
         /** Searches for the title of the verse and returns the ``id`` of the chapter the title is found
@@ -233,6 +261,21 @@ pub mod probe {
                 None => panic!("The prefix pattern was not found."),
             };
         }
+    }
+
+    /// Determines whether the verse is single or part of a range.
+    fn verse_kind(verse: &str) -> VerseKind {
+        if verse.contains("-") == true {
+            return VerseKind::RangeVerse;
+        } else {
+            return VerseKind::SingleVerse;
+        }
+    }
+
+    /// Splits the verse range into two parts and returns them as a tuple.
+    fn range_split(verse: &str) -> (&str, &str) {
+        let s: Vec<&str> = verse.split('-').collect();
+        return (s[0], s[1]);
     }
 }
 

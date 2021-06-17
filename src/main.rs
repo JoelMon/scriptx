@@ -20,7 +20,7 @@ fn main() -> Result<(), ScriptxErrors> {
         .version(crate_version!())
         .arg(
             Arg::with_name("verse")
-                .help("The verse to be cut out")
+                .help("The verse to be cut out. A single verse or a range of verses can be cut, ig. 2-5.")
                 .short("v")
                 .long("verse")
                 .takes_value(true)
@@ -28,7 +28,7 @@ fn main() -> Result<(), ScriptxErrors> {
         )
         .arg(
             Arg::with_name("file")
-                .help("The video file to process")
+                .help("The input video file to process.")
                 .short("f")
                 .long("file")
                 .takes_value(true)
@@ -36,7 +36,7 @@ fn main() -> Result<(), ScriptxErrors> {
         )
         .arg(
             Arg::with_name("output_path")
-                .help("The path were to save the output")
+                .help("The path were to save the output file.")
                 .short("o")
                 .long("output")
                 .takes_value(true)
