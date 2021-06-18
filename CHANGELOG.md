@@ -2,6 +2,9 @@
 
 ## ScriptX [v0.3.1](https://github.com/JoelMon/scriptx/releases/tag/v0.3.1) (2021-6-17)
 
+### Improvements
+- Refactored parts of the library.
+  
 ### Changes
 - Restructured the modules into files and directories for organization.
 - Renamed error module within `main.rs` to _scriptx\_errors_.
