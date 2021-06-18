@@ -1,5 +1,11 @@
 # Changelog
 
+## ScriptX [v0.3.1](https://github.com/JoelMon/scriptx/releases/tag/v0.3.1) (2021-6-17)
+
+### Changes
+- Restructured the modules into files and directories for organization.
+- Renamed error module within `main.rs` to _scriptx\_errors_.
+- Added `[[bin]]` to the `Cargo.toml` file. 
 
 ## ScriptX [v0.3.0](https://github.com/JoelMon/scriptx/releases/tag/v0.3.0) (2021-6-17)
 
