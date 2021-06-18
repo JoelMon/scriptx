@@ -1,4 +1,4 @@
-/// Module that contains error types.
+/// Module that contains custom error types used by the library.
 use core::fmt;
 
 #[derive(Debug)]
