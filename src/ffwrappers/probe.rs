@@ -1,3 +1,13 @@
+/*!
+ffprobe wrapper
+
+This module is a wrapper for the [ffprobe](https://ffmpeg.org/ffprobe.html) tool.
+It gathers relevant information needed for ScriptX function, for example, it is charged
+with collecting and returning chapter information such as the *start* and *end* time
+stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut out
+specific verses from the video file.
+*/
+
 use crate::ffwrappers::errors::Errors;
 use core::{f64, str};
 use regex::Regex;
@@ -9,14 +19,6 @@ enum VerseKind {
     RangeVerse,
 }
 
-/** ffprobe wrapper
-
-This module is a wrapper for the [ffprobe](https://ffmpeg.org/ffprobe.html) tool.
-It gathers relevant information needed for ScriptX function, for example, it is charged
-with collecting and returning chapter information such as the *start* and *end* time
-stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut out
-specific verses from the video file.
-*/
 /**
 The top most, or *root*, level of the struct
 
@@ -64,7 +66,8 @@ pub struct Chapter {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-/** Contains the title field for each chapter.
+/**
+Contains the title field for each chapter.
 
 The *title* field is used to determine the chapter that contains the verse(s) being searched for.
 
@@ -172,28 +175,27 @@ impl Root {
     pub fn verse(&self, verse: &str) -> (f64, f64) {
         let kind: VerseKind = verse_kind(verse);
         match kind {
-            VerseKind::SingleVerse => self
-                .find_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str())),
-            VerseKind::RangeVerse => {
-                let range: (&str, &str) = range_split(verse);
-                let start_time: f64 = self
-                    .find_times(
-                        self.find_verse_id(format!("{}{}", self.get_prefix(), range.0).as_str()),
-                    )
-                    .0;
-                let end_time: f64 = self
-                    .find_times(
-                        self.find_verse_id(format!("{}{}", self.get_prefix(), range.1).as_str()),
-                    )
-                    .1;
-                return (start_time, end_time);
-            }
+            VerseKind::SingleVerse => self.return_single_verse(verse),
+            VerseKind::RangeVerse => self.return_range_verse(verse),
         }
     }
 
-    /** Searches for the title of the verse and returns the ``id`` of the chapter the title is found
+    /// Returns a tuple with the _start_ and _end_ time for a singe verse.
+    fn return_single_verse(&self, verse: &str) -> (f64, f64) {
+        self.find_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
+    }
 
-    */
+    /// Returns a tuple with the _start_ and _end_ time for a range of verses.
+    fn return_range_verse(&self, verse: &str) -> (f64, f64) {
+        let range: (&str, &str) = range_split(verse);
+
+        let start_time: f64 = self.return_range_verse(range.0).0;
+
+        let end_time: f64 = self.return_range_verse(range.1).1;
+        return (start_time, end_time);
+    }
+
+    /// Searches for the title of the verse and returns the ``id`` of the chapter the title is found.
     fn find_verse_id(&self, verse: &str) -> i64 {
         for i in self.chapters.iter() {
             if i.tags.title == verse {
@@ -203,9 +205,7 @@ impl Root {
         panic!("The verse was not found.");
     }
 
-    /** Returns a tuple of the *start* and *end* time for the chapter in which the *id* has been provided for
-
-    */
+    /// Returns a tuple of the *start* and *end* time for the chapter in which the *id* has been provided for.
     fn find_times(&self, id: i64) -> (f64, f64) {
         for i in self.chapters.iter() {
             if i.id == id {
@@ -215,16 +215,17 @@ impl Root {
         unreachable!()
     }
 
-    /** Returns the prefix needed to complete the title being searched for.
-     *
-     * In order to avoid the user from having to type the complete title of the chapter being
-     * searched, this method finds the prefix of the chapter so the user doesn't have to add it
-     * when using the `-v` option.
-     *
-     * The method searches for all text up to and including the ':'. For example, the title
-     * _Joel 1:2_ would match and return the Joel 1:_ as a &str. The prefix is then combined
-     * with the verse the user wants.
-     */
+    /**
+    Returns the prefix needed to complete the title being searched for.
+
+    In order to avoid the user from having to type the complete title of the chapter being
+    searched, this method finds the prefix of the chapter so the user doesn't have to add it
+    when using the `-v` option.
+
+    The method searches for all text up to and including the ':'. For example, the title
+    _Joel 1:2_ would match and return the Joel 1:_ as a &str. The prefix is then combined
+    with the verse the user wants.
+    */
     fn get_prefix(&self) -> &str {
         let last_chapter = *&self.chapters.last().unwrap();
         let title = last_chapter.tags.title.as_str();
@@ -250,7 +251,7 @@ fn verse_kind(verse: &str) -> VerseKind {
     }
 }
 
-/// Splits the verse range into two parts and returns them as a tuple.
+/// Splits the verse range into two parts and returns a tuple (starting_verse, ending_verse).
 fn range_split(verse: &str) -> (&str, &str) {
     let s: Vec<&str> = verse.split('-').collect();
     return (s[0], s[1]);
@@ -276,22 +277,23 @@ mod tests {
         assert_eq!(root.verse("27"), (197.597, 226.259));
     }
 
-    /* Structure of the structs used in ff::probe
+    /*
+    Structure of the structs used in ff::probe
 
     struct Root {
-        chapters: Vec<Chapter>,
+    chapters: Vec<Chapter>,
     }
     struct Chapter {
-        id: i64,
-        time_base: String,
-        start: i64,
-        start_time: String,
-        end: i64,
-        end_time: String,
-        tags: Tags,
+    id: i64,
+    time_base: String,
+    start: i64,
+    start_time: String,
+    end: i64,
+    end_time: String,
+    tags: Tags,
     }
     pub struct Tags {
-        title: String, // The verse(s) being search for is compared to this field.
+    title: String, // The verse(s) being search for is compared to this field.
     }
     */
     fn init_struct_1() -> Root {
