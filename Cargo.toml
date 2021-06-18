@@ -1,6 +1,6 @@
 [package]
 name = "scriptx"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
 documentation = "https://docs.rs/scriptx"
@@ -12,9 +12,9 @@ license = "MIT"
 keywords = ["cli", "nwt", "bible", "ffmpeg", "jehovah-witness"]
 categories = ["command-line-utilities"]
 
-[lib]
-name = "ff"
-path = "src/ff.rs"
+[[bin]]
+name = "scriptx"
+path = "src/main.rs"
 
 [dependencies]
 clap = "2.33"

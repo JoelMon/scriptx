@@ -1,16 +1,16 @@
-// #![warn(missing_docs)]
+#![warn(missing_docs)]
 
+//! ScriptX is a command line tool designed to extract scriptures out of the American Sign Language version of the [New World Translation](https://www.jw.org/ase/library/bible/nwt/books/), NWT, Bible published by the [Watch Tower Bible and Tract Society of Pennsylvania](https://www.JW.org). It is useful when you need specific scripture(s) in a standalone file. A quick example would be if you need to splice scriptures into another video.
+
+mod ffwrappers;
 use core::str;
 use std::process::Command;
 
 use clap::{crate_authors, crate_version, App, Arg};
 
-use ff::{
-    mpeg,
-    probe::{self, Root},
-};
-
-use crate::custom_errors::ScriptxErrors;
+use ffwrappers::mpeg;
+use ffwrappers::probe::Root;
+use scriptx_errors::ScriptxErrors;
 
 /// ScriptX - A Sign Language Bible verse slicer.
 fn main() -> Result<(), ScriptxErrors> {
@@ -74,7 +74,7 @@ fn main() -> Result<(), ScriptxErrors> {
     let verse: &str = matches.value_of("verse").unwrap();
     let output_path: &str = matches.value_of("output_path").unwrap();
 
-    let chapters: Root = match probe::Root::new(path).map_err(|_| ScriptxErrors::FileError) {
+    let chapters: Root = match Root::new(path).map_err(|_| ScriptxErrors::FileError) {
         Ok(r) => r,
         Err(e) => return Err(e),
     };
@@ -111,9 +111,10 @@ fn check_for_ffmpeg() -> Result<bool, ScriptxErrors> {
 }
 
 /// Custom errors for the ScriptX project.
-pub mod custom_errors {
+pub mod scriptx_errors {
     use core::fmt;
 
+    /// The various errors used within ScriptX.
     #[derive(Debug)]
     pub enum ScriptxErrors {
         /// Errors dealing with dependency errors.
