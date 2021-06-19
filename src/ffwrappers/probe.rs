@@ -183,7 +183,7 @@ impl Root {
 
     /// Returns a tuple with the _start_ and _end_ time for a singe verse.
     fn return_single_verse(&self, verse: &str) -> (f64, f64) {
-        self.find_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
+        self.get_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
     }
 
     /// Returns a tuple with the _start_ and _end_ time for a range of verses.
@@ -207,13 +207,18 @@ impl Root {
     }
 
     /// Returns a tuple of the *start* and *end* time for the chapter in which the *id* has been provided for.
-    fn find_times(&self, id: i64) -> (f64, f64) {
+    fn get_times(&self, id: i64) -> (f64, f64) {
         for i in self.chapters.iter() {
             if i.id == id {
                 return (i.start_time.parse().unwrap(), i.end_time.parse().unwrap());
             }
         }
         unreachable!()
+    }
+
+    /// Returns the last chapter in the file.
+    fn get_last_chapter(&self) -> &Chapter {
+        return *&self.chapters.last().unwrap();
     }
 
     /**
@@ -228,8 +233,8 @@ impl Root {
     with the verse the user wants.
     */
     fn get_prefix(&self) -> &str {
-        let last_chapter = *&self.chapters.last().unwrap();
-        let title = last_chapter.tags.title.as_str();
+        // let last_chapter = *&self.chapters.last().unwrap();
+        let title = self.get_last_chapter().tags.title.as_str();
 
         let pattern = Regex::new(r"(^[\s\S]*:)").unwrap(); // Regular expression to find the prefix (ig. 'Joel 1:') of a `title`. See https://regexr.com/5vus6
         let prefix = pattern.captures(title);
@@ -241,6 +246,35 @@ impl Root {
             None => panic!("The prefix pattern was not found."),
         };
     }
+
+    /// Returns all the verses' start and end times in a vector.
+    pub fn get_all_verses(&self) -> Vec<(f64, f64)> {
+        // let prefix: &str = self.get_prefix(); // Example of prefix: 'John 3:'.
+        let last_verse: i32 = get_verse_from_title(self.get_last_chapter().tags.title.as_str());
+        let mut all_verses: Vec<(f64, f64)> = Vec::new(); // tuple of all the start/end times for the entire chapter.
+
+        for i in 1..last_verse {
+            all_verses.push(self.verse(&i.to_string()));
+        }
+
+        all_verses
+    }
+}
+
+/**
+Returns the verse number from a full title.
+## Example
+```rust
+let verse: i32 = get_verse_from_title("John 3:16")
+assert_eq!(verse, 16i32));
+
+```
+*/
+fn get_verse_from_title(title: &str) -> i32 {
+    let v: Vec<&str> = title.split(":").collect();
+    return v[1]
+        .parse()
+        .expect("Unable to parse verse number from &str to i32.");
 }
 
 /// Determines whether the verse is single or part of a range.
@@ -268,6 +302,18 @@ fn range_split(verse: &str) -> (&str, &str) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_get_verse_from_title() {
+        let title_0 = "Joel 5:1";
+        assert_eq!(get_verse_from_title(title_0), 1);
+
+        let title_0 = "John 3:16";
+        assert_eq!(get_verse_from_title(title_0), 16);
+
+        let title_0 = "Ps. 18:32";
+        assert_eq!(get_verse_from_title(title_0), 32);
+    }
 
     #[test]
     fn test_verse() {
@@ -312,7 +358,7 @@ mod tests {
     #[test]
     fn test_find_times() {
         let r: Root = init_struct_1();
-        assert_eq!(r.find_times(16), (197.597, 226.259));
+        assert_eq!(r.get_times(16), (197.597, 226.259));
     }
     #[test]
     fn test_return_range_verse() {
@@ -339,28 +385,23 @@ mod tests {
 
     #[test]
     fn test_verse_kind() {
-        let r: Root = init_struct_1();
         assert_eq!(verse_kind("1"), VerseKind::SingleVerse)
     }
-    /*
-    Structure of the structs used in ff::probe
 
-    struct Root {
-    chapters: Vec<Chapter>,
+    #[test]
+    fn test_last_chapter() {
+        let r: Root = init_struct_1();
+        let chapter: &Chapter = r.get_last_chapter();
+        assert_eq!(chapter.id, 26);
     }
-    struct Chapter {
-    id: i64,
-    time_base: String,
-    start: i64,
-    start_time: String,
-    end: i64,
-    end_time: String,
-    tags: Tags,
+
+    #[test]
+    #[ignore = "Need to finish writing the test."]
+    fn test_get_all_verses() {
+        let f = init_struct_1();
+        assert_eq!(f.get_all_verses(), vec![(197.597000, 4226.259000)]);
     }
-    pub struct Tags {
-    title: String, // The verse(s) being search for is compared to this field.
-    }
-    */
+
     fn init_struct_1() -> Root {
         let root_struct: Root = Root {
             chapters: {
@@ -416,3 +457,36 @@ mod tests {
         root_struct
     }
 }
+// #[test]
+// fn test_last_id() {
+//     let r: Root = init_struct_1();
+//     let id: i64 = r.last_id();
+//     assert_eq!(id, 26);
+// }
+
+// #[test]
+// #[ignore = "Not sure how to test this method yet."]
+// fn test_last_chapter() {
+//     let r: Root = init_struct_1();
+//     let last_chapter: &Chapter = r.last_chapter();
+// }
+
+/*
+Structure of the structs used in ff::probe
+
+struct Root {
+chapters: Vec<Chapter>,
+}
+struct Chapter {
+id: i64,
+time_base: String,
+start: i64,
+start_time: String,
+end: i64,
+end_time: String,
+tags: Tags,
+}
+pub struct Tags {
+title: String, // The verse(s) being search for is compared to this field.
+}
+*/
