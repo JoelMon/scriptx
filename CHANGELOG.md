@@ -1,5 +1,10 @@
 # Changelog
 
+## ScriptX [v0.3.3](https://github.com/JoelMon/scriptx/releases/tag/v0.3.3) (2021-6-18)
+
+### Fixes
+- Removed unused code in `test_verse_kind()` function.
+
 ## ScriptX [v0.3.2](https://github.com/JoelMon/scriptx/releases/tag/v0.3.2) (2021-6-18)
 
 ### Changes

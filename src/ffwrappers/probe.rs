@@ -339,7 +339,6 @@ mod tests {
 
     #[test]
     fn test_verse_kind() {
-        let r: Root = init_struct_1();
         assert_eq!(verse_kind("1"), VerseKind::SingleVerse)
     }
     /*
