@@ -8,7 +8,7 @@ stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut 
 specific verses from the video file.
 */
 
-use crate::ffwrappers::ers::Ers;
+use crate::ffwrappers::errors::Errors;
 use core::{f64, str};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -101,7 +101,7 @@ impl Root {
     let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
     ```
     */
-    pub fn new(path: &str) -> Result<Root, Ers> {
+    pub fn new(path: &str) -> Result<Root, Errors> {
         let probe = Command::new("ffprobe")
             .arg("-v")
             .arg("quiet")
@@ -118,7 +118,7 @@ impl Root {
                 "The file, {}, was not found by ffprobe. Check path and try again. ",
                 path
             );
-            return Err(Ers::FileError);
+            return Err(Errors::FileError);
         }
 
         let c: Root =

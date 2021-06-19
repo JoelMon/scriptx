@@ -3,6 +3,6 @@
 These two tools must be installed on the system in order for ScriptX to work.
 */
 
-pub mod ers;
+pub mod errors;
 pub mod mpeg;
 pub mod probe;
