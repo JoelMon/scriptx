@@ -4,6 +4,7 @@
 
 ### Improvements
 - Refactored parts of the library.
+- Added all unit tests for `probe.rs`.
   
 ### Changes
 - Restructured the modules into files and directories for organization.

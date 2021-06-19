@@ -8,8 +8,8 @@ use std::process::Command;
 
 use clap::{crate_authors, crate_version, App, Arg};
 
-use ffwrappers::mpeg;
-use ffwrappers::probe::Root;
+use crate::ffwrappers::mpeg;
+use crate::ffwrappers::probe::Root;
 use scriptx_errors::ScriptxErrors;
 
 /// ScriptX - A Sign Language Bible verse slicer.

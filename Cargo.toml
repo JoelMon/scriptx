@@ -15,6 +15,7 @@ categories = ["command-line-utilities"]
 [[bin]]
 name = "scriptx"
 path = "src/main.rs"
+doctest = true
 
 [dependencies]
 clap = "2.33"

@@ -8,12 +8,11 @@ stamps of each verse that is later used by [ffmpeg](https://ffmpeg.org/) to cut 
 specific verses from the video file.
 */
 
-use crate::ffwrappers::errors::Errors;
+use crate::ffwrappers::ers::Ers;
 use core::{f64, str};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::process::Command;
-
 enum VerseKind {
     SingleVerse,
     RangeVerse,
@@ -102,7 +101,7 @@ impl Root {
     let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
     ```
     */
-    pub fn new(path: &str) -> Result<Root, Errors> {
+    pub fn new(path: &str) -> Result<Root, Ers> {
         let probe = Command::new("ffprobe")
             .arg("-v")
             .arg("quiet")
@@ -119,7 +118,7 @@ impl Root {
                 "The file, {}, was not found by ffprobe. Check path and try again. ",
                 path
             );
-            return Err(Errors::FileError);
+            return Err(Ers::FileError);
         }
 
         let c: Root =
@@ -136,8 +135,8 @@ impl Root {
     ## Example
 
     ```rust,
-    use ff::probe;
-    # use ff::probe::{Root, Chapter, Tags};
+    use ffwrappers::probe;
+    # use ffwrappers::probe::{Root, Chapter, Tags};
     # let chapter: Root = Root {
     #     chapters: {
     #         vec![
@@ -189,9 +188,9 @@ impl Root {
     fn return_range_verse(&self, verse: &str) -> (f64, f64) {
         let range: (&str, &str) = range_split(verse);
 
-        let start_time: f64 = self.return_range_verse(range.0).0;
+        let start_time: f64 = self.return_single_verse(range.0).0;
 
-        let end_time: f64 = self.return_range_verse(range.1).1;
+        let end_time: f64 = self.return_single_verse(range.1).1;
         return (start_time, end_time);
     }
 
@@ -251,7 +250,14 @@ fn verse_kind(verse: &str) -> VerseKind {
     }
 }
 
-/// Splits the verse range into two parts and returns a tuple (starting_verse, ending_verse).
+/**
+Splits the verse range into two parts and returns a tuple (starting_verse, ending_verse).
+
+## Example
+```rust
+assert!(true);
+```
+*/
 fn range_split(verse: &str) -> (&str, &str) {
     let s: Vec<&str> = verse.split('-').collect();
     return (s[0], s[1]);
@@ -277,6 +283,57 @@ mod tests {
         assert_eq!(root.verse("27"), (197.597, 226.259));
     }
 
+    #[test]
+    fn test_range_split_1() {
+        assert_eq!(range_split("5-7"), ("5", "7"));
+    }
+    #[test]
+    fn test_range_split_2() {
+        assert_eq!(range_split("5-17"), ("5", "17"));
+    }
+    #[test]
+    fn test_range_split_3() {
+        assert_eq!(range_split("15-17"), ("15", "17"));
+    }
+
+    #[test]
+    fn test_get_prefix() {
+        let r: Root = init_struct_1();
+        assert_eq!(r.get_prefix(), "John 3:");
+    }
+    #[test]
+    fn test_find_verse_id() {
+        let r: Root = init_struct_1();
+        let id = r.find_verse_id("John 3:16");
+        assert_eq!(id, 16);
+    }
+    #[test]
+    fn test_find_times() {
+        let r: Root = init_struct_1();
+        assert_eq!(r.find_times(16), (197.597, 226.259));
+    }
+    #[test]
+    fn test_return_range_verse() {
+        let r: Root = init_struct_1();
+        assert_eq!(r.return_range_verse("16-17"), (197.597, 241.908))
+    }
+
+    #[test]
+    fn test_return_single_verse() {
+        let r: Root = init_struct_1();
+        assert_eq!(r.return_single_verse("16"), (197.597, 226.259))
+    }
+
+    #[test]
+    fn test_verse_single() {
+        let r: Root = init_struct_1();
+        assert_eq!(r.verse("16"), (197.597, 226.259))
+    }
+    #[test]
+    fn test_verse_range() {
+        let r: Root = init_struct_1();
+        assert_eq!(r.verse("16-17"), (197.597, 241.908))
+    }
     /*
     Structure of the structs used in ff::probe
 
