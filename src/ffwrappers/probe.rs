@@ -13,6 +13,8 @@ use core::{f64, str};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::process::Command;
+
+#[derive(PartialEq, Debug)]
 enum VerseKind {
     SingleVerse,
     RangeVerse,
@@ -333,6 +335,12 @@ mod tests {
     fn test_verse_range() {
         let r: Root = init_struct_1();
         assert_eq!(r.verse("16-17"), (197.597, 241.908))
+    }
+
+    #[test]
+    fn test_verse_kind() {
+        let r: Root = init_struct_1();
+        assert_eq!(verse_kind("1"), VerseKind::SingleVerse)
     }
     /*
     Structure of the structs used in ff::probe
