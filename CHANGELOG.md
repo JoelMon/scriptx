@@ -1,5 +1,10 @@
 # Changelog
 
+## ScriptX [v0.4.0](https://github.com/JoelMon/scriptx/releases/tag/v0.4.0) (2021-7-02)
+## Fix
+- Fixed the version number. v0.3.3 was supposed to be v0.4.0
+- Also updated the `README.md` file.
+
 ## ScriptX [v0.3.3](https://github.com/JoelMon/scriptx/releases/tag/v0.3.3) (2021-6-18)
 
 ### Fixes
