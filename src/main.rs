@@ -5,8 +5,9 @@
 mod ffwrappers;
 use core::str;
 use std::process::Command;
+use std::u8;
 
-use clap::{crate_authors, crate_version, App, Arg};
+use clap::{crate_authors, crate_version, App, Arg, ArgGroup, ArgMatches};
 
 use crate::ffwrappers::mpeg;
 use crate::ffwrappers::probe::Root;
@@ -14,17 +15,16 @@ use scriptx_errors::ScriptxErrors;
 
 /// ScriptX - A Sign Language Bible verse slicer.
 fn main() -> Result<(), ScriptxErrors> {
-    let matches = App::new("ScriptX")
+    let m:ArgMatches = App::new("ScriptX")
         .author(crate_authors!())
         .about("ScriptX cuts scriptures from the American Sign Language version of the New World Translation Bible.")
         .version(crate_version!())
         .arg(
             Arg::with_name("verse")
-                .help("The verse to be cut out. A single verse or a range of verses can be cut, ig. 2-5.")
+                .help("The verse to be cut out. A single verse or a range of verses can be cut, eg. 2-5.")
                 .short("v")
                 .long("verse")
-                .takes_value(true)
-                .required(true),
+                .takes_value(true),
         )
         .arg(
             Arg::with_name("file")
@@ -42,6 +42,19 @@ fn main() -> Result<(), ScriptxErrors> {
                 .takes_value(true)
                 .default_value("output.m4v"),
         )
+        .arg(
+            Arg::with_name("all")
+                .help("Extracts all scriptures from the file.")
+                .short("a")
+                .long("all")
+                .takes_value(false),
+        )
+        .group(ArgGroup::with_name("extraction_types")
+            .args(&["all", "verse"])
+            .multiple(false)
+            .required(true),
+        )
+        .after_help("There's a known bug where some books of the Bible are not extracted correctly. Check Github's issue #17: https://github.com/JoelMon/scriptx/issues/17")
         .get_matches();
 
     // Todo: Find a better solution to this error message.
@@ -70,18 +83,58 @@ fn main() -> Result<(), ScriptxErrors> {
         }
     };
 
-    let path: &str = matches.value_of("file").unwrap();
-    let verse: &str = matches.value_of("verse").unwrap();
-    let output_path: &str = matches.value_of("output_path").unwrap();
+    let path: &str = m.value_of("file").unwrap();
+    let output_path: &str = m.value_of("output_path").unwrap();
 
-    let chapters: Root = match Root::new(path).map_err(|_| ScriptxErrors::FileError) {
-        Ok(r) => r,
-        Err(e) => return Err(e),
+    match m.is_present("all") {
+        true => {
+            match all_verses(path, output_path) {
+                Ok(_) => (),
+                Err(e) => return Err(e),
+            };
+        }
+        false => {
+            match some_verses(path, &m, output_path) {
+                Ok(_) => (),
+                Err(e) => return Err(e),
+            };
+        }
     };
 
-    let (start_time, end_time) = chapters.verse(verse);
+    fn all_verses(path: &str, output_path: &str) -> Result<(), ScriptxErrors> {
+        let chapters: Root = match Root::new(path).map_err(|_| ScriptxErrors::FileError) {
+            Ok(r) => r,
+            Err(e) => return Err(e),
+        };
+        let chapters_vec: Vec<(f64, f64)> = chapters.get_all_verses();
+        let mut i: u8 = 1;
 
-    mpeg::cut(start_time, end_time, path, output_path);
+        for t in chapters_vec.iter() {
+            let (start_time, end_time) = *t;
+            mpeg::cut(
+                start_time,
+                end_time,
+                path,
+                format!("{}-{}", i, output_path).as_str(),
+            );
+            i += 1;
+        }
+        Ok(())
+    }
+
+    fn some_verses(path: &str, m: &ArgMatches, output_path: &str) -> Result<(), ScriptxErrors> {
+        let verse: &str = m.value_of("verse").unwrap();
+
+        let chapters: Root = match Root::new(path).map_err(|_| ScriptxErrors::FileError) {
+            Ok(r) => r,
+            Err(e) => return Err(e),
+        };
+
+        let (start_time, end_time) = chapters.verse(verse);
+
+        mpeg::cut(start_time, end_time, path, output_path);
+        Ok(())
+    }
 
     Ok(())
 }
