@@ -1,4 +1,8 @@
 # Changelog
+## ScriptX [v0.4.1](https://github.com/JoelMon/scriptx/releases/tag/v0.4.1) (2021-7-04)
+## Fix
+- Fixed #17 bug where some Bible books were not being extracted correctly.
+- Fixed #12 Now if the output file exists, it overrides it instead of crashing.
 
 ## ScriptX [v0.4.0](https://github.com/JoelMon/scriptx/releases/tag/v0.4.0) (2021-7-02)
 ## Fix

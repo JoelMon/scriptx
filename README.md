@@ -45,9 +45,6 @@ OPTIONS:
     -f, --file <file>             The input video file to process.
     -o, --output <output_path>    The path were to save the output file. [default: output.m4v]
     -v, --verse <verse>           The verse to be cut out. A single verse or a range of verses can be cut, eg. 2-5.
-
-There's a known bug where some books of the Bible are not extracted correctly. Check Github's issue #17:
-https://github.com/JoelMon/scriptx/issues/17
 ```
  
 ## Contributing
