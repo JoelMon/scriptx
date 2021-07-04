@@ -1,0 +1,12 @@
+Package: scriptx
+Date: <date>
+Version: <version>
+Architecture: amd64
+Essential: no
+Priority: optional
+Urgency: low
+Depends: ffmpeg
+Maintainer: Joel Montes de Oca
+Description: ScriptX is a command line tool to cut scriptures out of the American Sign Language version of the New World Translation.
+Homepage: https://joelmon.github.io/scriptx/
+

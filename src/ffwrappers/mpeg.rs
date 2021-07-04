@@ -35,9 +35,4 @@ pub fn cut(start_time: f64, end_time: f64, path: &str, output: &str) {
     if !command.status.success() {
         panic!("ffmpeg's exit status was FAILURE");
     }
-    println!(
-        "Start time: {}, End time: {}",
-        start_time.to_string(),
-        end_time.to_string()
-    );
 }

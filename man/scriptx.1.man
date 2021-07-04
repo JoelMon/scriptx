@@ -1,0 +1,30 @@
+.TH SCRIPTX "1" "July 2021" "Linux" "User Commands"
+.SH NAME
+ScriptX \- Script EXtract
+.SH DESCRIPTION
+ScriptX 0.4.1
+Joel Montes de Oca
+ScriptX cuts scriptures from the American Sign Language version of the New World Translation Bible.
+.SS "USAGE:"
+.IP
+scriptx [OPTIONS] \fB\-\-file\fR <file> <\-\-all|\-\-verse <verse>>
+.SS "FLAGS:"
+.TP
+\fB\-a\fR, \fB\-\-all\fR
+Extracts all scriptures from the file.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Prints help information
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Prints version information
+.SS "OPTIONS:"
+.TP
+\fB\-f\fR, \fB\-\-file\fR <file>
+The input video file to process.
+.TP
+\fB\-o\fR, \fB\-\-output\fR <output_path>
+The path were to save the output file. [default: output.m4v]
+.TP
+\fB\-v\fR, \fB\-\-verse\fR <verse>
+The verse to be cut out. A single verse or a range of verses can be cut, eg. 2\-5.

@@ -1,4 +1,19 @@
 # Changelog
+
+## ScriptX [v0.4.2](https://github.com/JoelMon/scriptx/releases/tag/v0.4.2) (2021-7-04)
+## New Feature
+- Close #21 - Added a progress bar to when using the `-a --all` flag.
+
+## Fix
+- Fixed #20 - Removed the out of date "known bug" from `-h`.
+
+## Other
+- Added man pages for the project
+- Updated `hermit-abi` crate
+- Close #22 - made a script, `make-deb` to create deb files
+  - Added `deb` directory that holds the control file used to create deb file
+  - Add `man` directory that holds the man file for creating Linux packages
+
 ## ScriptX [v0.4.1](https://github.com/JoelMon/scriptx/releases/tag/v0.4.1) (2021-7-04)
 ## Fix
 - Fixed #17 bug where some Bible books were not being extracted correctly.

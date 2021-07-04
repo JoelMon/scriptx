@@ -4,6 +4,7 @@
 
 mod ffwrappers;
 use core::str;
+use indicatif::ProgressIterator;
 use std::process::Command;
 use std::u8;
 
@@ -54,7 +55,6 @@ fn main() -> Result<(), ScriptxErrors> {
             .multiple(false)
             .required(true),
         )
-        .after_help("There's a known bug where some books of the Bible are not extracted correctly. Check Github's issue #17: https://github.com/JoelMon/scriptx/issues/17")
         .get_matches();
 
     // Todo: Find a better solution to this error message.
@@ -109,7 +109,7 @@ fn main() -> Result<(), ScriptxErrors> {
         let chapters_vec: Vec<(f64, f64)> = chapters.get_all_verses();
         let mut i: u8 = 1;
 
-        for t in chapters_vec.iter() {
+        for t in chapters_vec.iter().progress() {
             let (start_time, end_time) = *t;
             mpeg::cut(
                 start_time,
@@ -117,6 +117,7 @@ fn main() -> Result<(), ScriptxErrors> {
                 path,
                 format!("{}-{}", i, output_path).as_str(),
             );
+
             i += 1;
         }
         Ok(())

@@ -1,0 +1,28 @@
+#!/bin/bash
+version=`head Cargo.toml | grep "version =" | awk '{print $3}' | sed 's/"//g'`
+arch="amd64"
+date=`date +"%Y"-"%m"-"%d"`
+root_dir=/tmp/scriptx_$version\_$arch/
+debian_dir=$root_dir/DEBIAN/
+bin_dir=$root_dir/usr/bin
+man_dir=$root_dir/usr/share/man/man1/
+
+# Create dir in the temp
+mkdir -p $bin_dir
+mkdir -p $debian_dir
+mkdir -p $man_dir
+
+# Build binary and copy to bin_dir if pass
+cargo build --release && cp target/release/scriptx $bin_dir/scriptx
+
+# Copy and edit man file
+cp man/scriptx.1.man $man_dir/scriptx.1
+sed -i "s/ScriptX *.*.*/ScriptX $version/" $man_dir/scriptx.1
+
+# copy and edit control file
+cp deb/control $debian_dir/control
+sed -i "s/Date: <date>/Date: $date/" $debian_dir/control
+sed -i "s/Version: <version>/Version: $version/" $debian_dir/control
+
+# Build deb
+dpkg --build $root_dir
