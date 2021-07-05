@@ -15,9 +15,8 @@ mkdir -p $man_dir
 # Build binary and copy to bin_dir if pass
 cargo build --release && cp target/release/scriptx $bin_dir/scriptx
 
-# Copy and edit man file
-cp man/scriptx.1.man $man_dir/scriptx.1
-sed -i "s/ScriptX *.*.*/ScriptX $version/" $man_dir/scriptx.1
+# Generate and compress the man page, help2man has to be installed
+help2man -N -S Linux target/release/scriptx | gzip > $man_dir/scriptx.1.gz
 
 # copy and edit control file
 cp deb/control $debian_dir/control

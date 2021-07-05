@@ -8,7 +8,7 @@ use indicatif::ProgressIterator;
 use std::process::Command;
 use std::u8;
 
-use clap::{crate_authors, crate_version, App, Arg, ArgGroup, ArgMatches};
+use clap::{crate_authors, crate_description, crate_version, App, Arg, ArgGroup, ArgMatches};
 
 use crate::ffwrappers::mpeg;
 use crate::ffwrappers::probe::Root;
@@ -18,11 +18,11 @@ use scriptx_errors::ScriptxErrors;
 fn main() -> Result<(), ScriptxErrors> {
     let m:ArgMatches = App::new("ScriptX")
         .author(crate_authors!())
-        .about("ScriptX cuts scriptures from the American Sign Language version of the New World Translation Bible.")
+        .about(crate_description!())
         .version(crate_version!())
         .arg(
             Arg::with_name("verse")
-                .help("The verse to be cut out. A single verse or a range of verses can be cut, eg. 2-5.")
+                .help("The verse to be extracted out. A single verse or a range of verses can be extracted. e.g. 2-5")
                 .short("v")
                 .long("verse")
                 .takes_value(true),

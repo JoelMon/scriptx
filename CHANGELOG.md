@@ -1,5 +1,15 @@
 # Changelog
 
+## ScriptX [v0.4.3](https://github.com/JoelMon/scriptx/releases/tag/v0.4.3) (2021-7-05)
+
+## Fix
+- Close #24 - Reworded cut to extract in the deb `control` file and other places.
+
+## Other
+- Instead of modifying a static man file, `make-deb` generates and compresses the man file. The man file created isn't perfect but it's better than having the man page to by out of sync with development. **NOTE:** With [Clap 3](https://github.com/clap-rs/clap/issues/552) man pages generation should be possible.:w
+- Replaced clap's description string with the `crate_description` macro. The `--help` application description will be the same as the one in `Cargo.toml`.
+- Tweaked the wording in the `-v` option help string.
+
 ## ScriptX [v0.4.2](https://github.com/JoelMon/scriptx/releases/tag/v0.4.2) (2021-7-04)
 ## New Feature
 - Close #21 - Added a progress bar to when using the `-a --all` flag.
