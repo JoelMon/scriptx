@@ -1,0 +1,34 @@
+strategy:
+  matrix:
+    include:
+    - build: linux
+      os: ubuntu-latest
+      rust: stable
+    - build: macos
+      os: macos-latest
+      rust: stable
+       - name: Install Rust
+   run: rustup install ${{ matrix.rust }}
+ - name: Build
+   run: cargo build --release
+   
+    - name: Package Artifacts
+    run: |
+      src=$(pwd)
+      stage=
+      case $RUNNER_OS in
+          Linux)
+              stage=$(mktemp -d)
+              ;;
+          macOS)
+              stage=$(mktemp -d -t tmp)
+              ;;
+      esac
+      cp target/${{ matrix.target }}/release/scriptx $stage/
+      cd $stage
+      RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+      ASSET_NAME="sysit-$RELEASE_VERSION-${{ matrix.target }}.tar.gz"
+      ASSET_PATH="$src/$ASSET_NAME"
+      echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+      tar czf $ASSET_PATH *
+      cd $src      
