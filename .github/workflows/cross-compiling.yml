@@ -1,4 +1,9 @@
-strategy:
+name: cross-compiling
+
+on:
+  push:
+    branches: [ main ]
+  
   matrix:
     include:
     - build: linux
@@ -7,10 +12,11 @@ strategy:
     - build: macos
       os: macos-latest
       rust: stable
-       - name: Install Rust
-   run: rustup install ${{ matrix.rust }}
- - name: Build
-   run: cargo build --release
+       
+    - name: Install Rust
+      run: rustup install ${{ matrix.rust }}
+    - name: Build
+      run: cargo build --release
    
     - name: Package Artifacts
     run: |
