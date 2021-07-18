@@ -12,7 +12,7 @@ use crate::ffwrappers::errors::Errors;
 use core::{f64, str};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::process::Command;
+use std::{path::Path, process::Command};
 
 #[derive(PartialEq, Debug)]
 enum VerseKind {
@@ -103,7 +103,7 @@ impl Root {
     let chapter:Root = probe::new("nwt_43_Joh_ASL_03_r720P.mp4");
     ```
     */
-    pub fn new(path: &str) -> Result<Root, Errors> {
+    pub fn new(path: &Path) -> Result<Root, Errors> {
         let probe = Command::new("ffprobe")
             .arg("-v")
             .arg("quiet")
@@ -118,7 +118,7 @@ impl Root {
         if !probe.status.success() {
             eprint!(
                 "The file, {}, was not found by ffprobe. Check path and try again. ",
-                path
+                path.to_str().unwrap()
             );
             return Err(Errors::FileError);
         }
@@ -193,7 +193,7 @@ impl Root {
         let start_time: f64 = self.return_single_verse(range.0).0;
 
         let end_time: f64 = self.return_single_verse(range.1).1;
-        return (start_time, end_time);
+        (start_time, end_time)
     }
 
     /// Searches for the title of the verse and returns the ``id`` of the chapter the title is found.
@@ -218,7 +218,7 @@ impl Root {
 
     /// Returns the last chapter in the file.
     fn get_last_chapter(&self) -> &Chapter {
-        return *&self.chapters.last().unwrap();
+        return self.chapters.last().unwrap();
     }
 
     /**
@@ -271,18 +271,17 @@ assert_eq!(verse, 16i32));
 ```
 */
 fn get_verse_from_title(title: &str) -> i32 {
-    let v: Vec<&str> = title.split(":").collect();
-    return v[1]
-        .parse()
-        .expect("Unable to parse verse number from &str to i32.");
+    let v: Vec<&str> = title.split(':').collect();
+    v[1].parse()
+        .expect("Unable to parse verse number from &str to i32.")
 }
 
 /// Determines whether the verse is single or part of a range.
 fn verse_kind(verse: &str) -> VerseKind {
-    if verse.contains("-") == true {
-        return VerseKind::RangeVerse;
+    if verse.contains('-') {
+        VerseKind::RangeVerse
     } else {
-        return VerseKind::SingleVerse;
+        VerseKind::SingleVerse
     }
 }
 
@@ -296,7 +295,7 @@ assert!(true);
 */
 fn range_split(verse: &str) -> (&str, &str) {
     let s: Vec<&str> = verse.split('-').collect();
-    return (s[0], s[1]);
+    (s[0], s[1])
 }
 
 #[cfg(test)]

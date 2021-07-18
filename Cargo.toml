@@ -1,6 +1,6 @@
 [package]
 name = "scriptx"
-version = "0.4.3"
+version = "0.4.4"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
 documentation = "https://github.com/JoelMon/scriptx/"
@@ -9,7 +9,7 @@ description = "ScriptX is a command line tool to extract scriptures out of the A
 repository = "https://github.com/JoelMon/scriptx"
 readme = "README.md"
 license = "MIT"
-keywords = ["cli", "nwt", "bible", "ffmpeg", "jehovah-witness"]
+keywords = ["cli", "nwt", "bible", "jehovah-witness"]
 categories = ["command-line-utilities"]
 
 [[bin]]

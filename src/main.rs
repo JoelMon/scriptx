@@ -5,6 +5,7 @@
 mod ffwrappers;
 use core::str;
 use indicatif::ProgressIterator;
+use std::path::Path;
 use std::process::Command;
 use std::u8;
 
@@ -83,8 +84,8 @@ fn main() -> Result<(), ScriptxErrors> {
         }
     };
 
-    let path: &str = m.value_of("file").unwrap();
-    let output_path: &str = m.value_of("output_path").unwrap();
+    let path: &Path = Path::new(m.value_of("file").unwrap());
+    let output_path: &Path = Path::new(m.value_of("output_path").unwrap());
 
     match m.is_present("all") {
         true => {
@@ -101,7 +102,7 @@ fn main() -> Result<(), ScriptxErrors> {
         }
     };
 
-    fn all_verses(path: &str, output_path: &str) -> Result<(), ScriptxErrors> {
+    fn all_verses(path: &Path, out_path: &Path) -> Result<(), ScriptxErrors> {
         let chapters: Root = match Root::new(path).map_err(|_| ScriptxErrors::FileError) {
             Ok(r) => r,
             Err(e) => return Err(e),
@@ -109,13 +110,20 @@ fn main() -> Result<(), ScriptxErrors> {
         let chapters_vec: Vec<(f64, f64)> = chapters.get_all_verses();
         let mut i: u8 = 1;
 
-        for t in chapters_vec.iter().progress() {
-            let (start_time, end_time) = *t;
+        for scripture in chapters_vec.iter().progress() {
+            let (start_time, end_time) = *scripture;
+            let destination: &Path = out_path.parent().unwrap();
+            let file_name = out_path
+                .file_name()
+                .expect("Expected to find a file name.")
+                .to_str()
+                .unwrap();
+
             mpeg::cut(
                 start_time,
                 end_time,
                 path,
-                format!("{}-{}", i, output_path).as_str(),
+                format!("{}/{}-{}", destination.to_str().unwrap(), i, file_name).as_str(),
             );
 
             i += 1;
@@ -123,7 +131,7 @@ fn main() -> Result<(), ScriptxErrors> {
         Ok(())
     }
 
-    fn some_verses(path: &str, m: &ArgMatches, output_path: &str) -> Result<(), ScriptxErrors> {
+    fn some_verses(path: &Path, m: &ArgMatches, output_path: &Path) -> Result<(), ScriptxErrors> {
         let verse: &str = m.value_of("verse").unwrap();
 
         let chapters: Root = match Root::new(path).map_err(|_| ScriptxErrors::FileError) {
@@ -133,7 +141,7 @@ fn main() -> Result<(), ScriptxErrors> {
 
         let (start_time, end_time) = chapters.verse(verse);
 
-        mpeg::cut(start_time, end_time, path, output_path);
+        mpeg::cut(start_time, end_time, path, output_path.to_str().unwrap());
         Ok(())
     }
 
@@ -146,9 +154,7 @@ fn check_for_ffprobe() -> Result<bool, ScriptxErrors> {
 
     match ffprobe {
         Ok(o) => Ok(o.status.success()),
-        _ => {
-            return Err(ScriptxErrors::DependencyError);
-        }
+        _ => Err(ScriptxErrors::DependencyError),
     }
 }
 
@@ -158,9 +164,7 @@ fn check_for_ffmpeg() -> Result<bool, ScriptxErrors> {
 
     match ffmpeg {
         Ok(o) => Ok(o.status.success()),
-        _ => {
-            return Err(ScriptxErrors::DependencyError);
-        }
+        _ => Err(ScriptxErrors::DependencyError),
     }
 }
 

@@ -1,4 +1,15 @@
 # Changelog
+## ScriptX [v0.4.4](https://github.com/JoelMon/scriptx/releases/tag/v0.4.4) (2021-7-20)
+
+## Fix
+- Close #27 - Removed `ffmpeg` from `Cargo.toml`
+- Updated the `Readme.md` *Usage* section
+
+## Improvements
+- Added the new `-a` feature to the `README.md` *Features* section
+- Added instructions for installing ScriptX from the repository using `cargo install --git`
+- Close #18 - Started using `std::path::Path` instead of strings
+- Made code more idiomatic
 
 ## ScriptX [v0.4.3](https://github.com/JoelMon/scriptx/releases/tag/v0.4.3) (2021-7-05)
 

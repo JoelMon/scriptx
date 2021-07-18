@@ -8,6 +8,7 @@ All the meta data stored within the original file is retained even after being e
 
 ## Features
 - Extract single or a range of scriptures eg. `-v 5-10` extracts verses ranging from 5 to 10
+- Extracts all scriptures into individual files with `-a`
 - Maintains all metadata from the original file
 - Doesn't transcode so blazing :fire: fast!
 
@@ -16,7 +17,6 @@ All the meta data stored within the original file is retained even after being e
 
 ## Dependencies 
 [ffmpeg](https://ffmpeg.org/) is required and has to be installed.
-
 
 ## Installation
 ScriptX hasn't been tested on Windows but it should work. If it doesn't create an [issue](https://github.com/JoelMon/scriptx/issues) and I will look into it.
@@ -27,12 +27,17 @@ Use [Cargo](https://doc.rust-lang.org/cargo/) to install ScriptX.
 $ cargo install scriptx
 ```
 
+If you prefer to install using the repository instead:
+
+```bash
+$ cargo install --git https://github.com/JoelMon/scriptx
+```
 
 ## Usage
 
-
 ```text
-ScriptX cuts scriptures from the American Sign Language version of the New World Translation Bible.
+ScriptX is a command line tool to extract scriptures out of the American Sign Language version of the New World
+Translation.
 
 USAGE:
     scriptx [OPTIONS] --file <file> <--all|--verse <verse>>
@@ -45,9 +50,10 @@ FLAGS:
 OPTIONS:
     -f, --file <file>             The input video file to process.
     -o, --output <output_path>    The path were to save the output file. [default: output.m4v]
-    -v, --verse <verse>           The verse to be cut out. A single verse or a range of verses can be cut, eg. 2-5.
+    -v, --verse <verse>           The verse to be extracted out. A single verse or a range of verses can be extracted.
+                                  e.g. 2-5
+
 ```
- 
 ## Contributing
 Pull requests are welcome. For major changes or if unsure about a contribution, please open an [issue](https://github.com/JoelMon/scriptx/issues) first to discuss what you would like to change.
 
