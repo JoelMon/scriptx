@@ -1,5 +1,9 @@
 # Changelog
 
+## ScriptX [v0.4.6](https://github.com/JoelMon/scriptx/releases/tag/v0.4.6) (2021-7-20)
+
+## Changes
+- Added `help2man` to the deb package building script in order to be able to produce man pages
 ## ScriptX [v0.4.5](https://github.com/JoelMon/scriptx/releases/tag/v0.4.5) (2021-7-20)
 
 ## Changes
