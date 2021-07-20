@@ -4,17 +4,31 @@ on:
   push:
     branches: [ main ]
   
-  matrix:
-    include:
-    - build: linux
-      os: ubuntu-latest
-      rust: stable
-    - build: macos
-      os: macos-latest
-      rust: stable
-       
+jobs:
+  publish-to-github:
+    name: Publish to Github
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        include:
+        - build: linux
+          os: ubuntu-latest
+          rust: stable
+        - build: macos
+          os: macos-latest
+          rust: stable
+    steps:
+    - name: Checkout Repository
+    uses: action/checkout@v2
+    with:
+      fetch-depth: 1
+      
     - name: Install Rust
-      run: rustup install ${{ matrix.rust }}
+    run: |
+      rustup install ${{ matrix.rust }}
+      rustup target add ${{matrix.target}}
+      rustup show
+      
     - name: Build
       run: cargo build --release
    
