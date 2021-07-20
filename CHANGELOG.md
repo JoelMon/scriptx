@@ -1,4 +1,11 @@
 # Changelog
+
+## ScriptX [v0.4.5](https://github.com/JoelMon/scriptx/releases/tag/v0.4.5) (2021-7-20)
+
+## Changes
+- Added Github workflow to auto create deb files for Ubuntu amd64 systems
+- Updated the `README.md` file
+
 ## ScriptX [v0.4.4](https://github.com/JoelMon/scriptx/releases/tag/v0.4.4) (2021-7-20)
 
 ## Fix

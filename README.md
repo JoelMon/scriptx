@@ -21,6 +21,7 @@ All the meta data stored within the original file is retained even after being e
 ## Installation
 ScriptX hasn't been tested on Windows but it should work. If it doesn't create an [issue](https://github.com/JoelMon/scriptx/issues) and I will look into it.
 
+### From Source
 Use [Cargo](https://doc.rust-lang.org/cargo/) to install ScriptX.
 
 ```bash
@@ -32,6 +33,9 @@ If you prefer to install using the repository instead:
 ```bash
 $ cargo install --git https://github.com/JoelMon/scriptx
 ```
+
+### Package
+Ubuntu deb packages for amd64 systems are provided in the [releases](https://github.com/JoelMon/scriptx/releases).
 
 ## Usage
 
