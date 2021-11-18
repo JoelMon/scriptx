@@ -1,4 +1,4 @@
-name: Package deb file
+name: Package deb package
 on:
   push:
     tags:
