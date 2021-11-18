@@ -1,5 +1,22 @@
 # Changelog
 
+## ScriptX [v0.4.7](https://github.com/JoelMon/scriptx/releases/tag/v0.4.7) (2021-11-18)
+- Updated dependencies
+  - Updating bitflags v1.2.1 -> v1.3.2
+  -  Updating console v0.14.1 -> v0.15.0
+  -  Updating itoa v0.4.7 -> v0.4.8
+  -  Updating libc v0.2.97 -> v0.2.107
+  -  Updating memchr v2.4.0 -> v2.4.1
+    - Adding once_cell v1.8.0
+  -  Updating proc-macro2 v1.0.27 -> v1.0.32
+  -  Updating quote v1.0.9 -> v1.0.10
+  -  Updating serde v1.0.126 -> v1.0.130
+  -  Updating serde_derive v1.0.126 -> v1.0.130
+  -  Updating serde_json v1.0.64 -> v1.0.71
+  -  Updating syn v1.0.73 -> v1.0.81
+  -  Updating unicode-width v0.1.8 -> v0.1.9
+- Fixed #29
+
 ## ScriptX [v0.4.6](https://github.com/JoelMon/scriptx/releases/tag/v0.4.6) (2021-7-20)
 
 ## Changes
