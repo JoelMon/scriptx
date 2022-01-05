@@ -203,7 +203,7 @@ impl Root {
                 return i.id;
             }
         }
-        panic!("The verse was not found.");
+        panic!("The verse was not found");
     }
 
     /// Returns a tuple of the *start* and *end* time for the chapter in which the *id* has been provided for.
@@ -233,7 +233,6 @@ impl Root {
     with the verse the user wants.
     */
     fn get_prefix(&self) -> &str {
-        // let last_chapter = *&self.chapters.last().unwrap();
         let title = self.get_last_chapter().tags.title.as_str();
 
         let pattern = Regex::new(r"(^[\s\S]*:)").unwrap(); // Regular expression to find the prefix (ig. 'Joel 1:') of a `title`. See https://regexr.com/5vus6

@@ -1,5 +1,21 @@
 # Changelog
 
+## ScriptX [v0.4.8](https://github.com/JoelMon/scriptx/releases/tag/v0.4.7) (2022-01-05)
+- Removed period after an error message. Periods should not be used in error strings.
+- Updated dependencies
+  - Updating ansi_term v0.11.0 -> v0.12.1
+  - Updating clap v2.33.3 -> v2.33.4
+  - Updating itoa v0.4.8 -> v1.0.1
+  - Updating libc v0.2.107 -> v0.2.112
+  - Updating once_cell v1.8.0 -> v1.9.0
+  - Updating proc-macro2 v1.0.32 -> v1.0.36
+  - Updating quote v1.0.10 -> v1.0.14
+  - Updating ryu v1.0.5 -> v1.0.9
+  - Updating serde v1.0.130 -> v1.0.133
+  - Updating serde_derive v1.0.130 -> v1.0.133
+  - Updating serde_json v1.0.71 -> v1.0.74
+  - Updating syn v1.0.81 -> v1.0.84
+
 ## ScriptX [v0.4.7](https://github.com/JoelMon/scriptx/releases/tag/v0.4.7) (2021-11-18)
 - Updated dependencies
   - Updating bitflags v1.2.1 -> v1.3.2
