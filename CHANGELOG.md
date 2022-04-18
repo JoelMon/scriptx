@@ -1,6 +1,21 @@
 # Changelog
 
-## ScriptX [v0.4.8](https://github.com/JoelMon/scriptx/releases/tag/v0.4.7) (2022-01-05)
+## ScriptX [v0.4.9](https://github.com/JoelMon/scriptx/releases/tag/v0.4.9) (2022-04-18)
+- Fixed security vunablity
+  - The regex [v1.5.4](https://rustsec.org/advisories/RUSTSEC-2022-0013.html) has a security vunablility that was fixed in v1.5.5. This release updates regex to the patched regex version v1.5.5.
+- Updated dependencies
+  - Updated libc v0.2.112 -> v0.2.123 
+  - Updated once_cell v1.9.0 -> v1.10.0
+  - Updated proc-macro2 v1.0.26 -> v1.0.37
+  - Updated quote v1.0.14 -> v1.0.18
+  - Updated regex [v1.5.4](https://rustsec.org/advisories/RUSTSEC-2022-0013.html) -> v1.5.5
+  - Updated serde v1.0.133 -> v1.0.136
+  - Updated serde_derive v1.0.133 -> v1.0.136
+  - Updated serde_json v1.0.74 -> v1.0.79
+  - Updated syn v1.0.84 - v1.0.91
+- Added note to the README.md doc regarding known problems with some video files.
+
+## ScriptX [v0.4.8](https://github.com/JoelMon/scriptx/releases/tag/v0.4.8) (2022-01-05)
 - Removed period after an error message. Periods should not be used in error strings.
 - Updated dependencies
   - Updating ansi_term v0.11.0 -> v0.12.1
