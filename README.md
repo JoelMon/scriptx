@@ -16,7 +16,7 @@ All the meta data stored within the original file is retained even after being e
 
 
 ## Known Issues
-Some scripture videos files that can be downloaded from [https://www.jw.org](https://www.jw.org/ase/library/bible/nwt/books/) do not contain the meta data necisary for ScriptX to process. At the moment there are not work around for this problem. If ScriptX is ran on a file that causes a crash, this is likely the proboblem.
+Some scripture videos files that can be downloaded from [https://www.jw.org](https://www.jw.org/ase/library/bible/nwt/books/) do not contain the meta data necessary for ScriptX to process. At the moment there are not work around for this problem. If ScriptX is ran on a file that causes a crash, this is likely the problem.
 
 ## Dependencies 
 [ffmpeg](https://ffmpeg.org/) is required and has to be installed.
