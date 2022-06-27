@@ -107,7 +107,7 @@ fn main() -> Result<(), ScriptxErrors> {
             Ok(r) => r,
             Err(e) => return Err(e),
         };
-        let chapters_vec: Vec<(f64, f64)> = chapters.get_all_verses();
+        let chapters_vec: Vec<(f64, f64)> = chapters.get_all_verses().unwrap();
         let mut i: u8 = 1;
 
         for scripture in chapters_vec.iter().progress() {
@@ -139,7 +139,7 @@ fn main() -> Result<(), ScriptxErrors> {
             Err(e) => return Err(e),
         };
 
-        let (start_time, end_time) = chapters.verse(verse);
+        let (start_time, end_time) = chapters.verse(verse).unwrap();
 
         mpeg::cut(start_time, end_time, path, output_path.to_str().unwrap());
         Ok(())

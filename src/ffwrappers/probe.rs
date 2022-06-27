@@ -13,7 +13,17 @@ use core::{f64, str};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::{path::Path, process::Command};
+use thiserror::Error;
 
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("The verse `{verse:?}` was not found")]
+    VerseNotFound { verse: String },
+    #[error("The prefix was not found")]
+    PrefixNotMatch,
+    #[error("Unable to parse verse number from {item:?} to i32")]
+    VerseFromTitle { item: String },
+}
 #[derive(PartialEq, Debug)]
 enum VerseKind {
     SingleVerse,
@@ -173,52 +183,55 @@ impl Root {
     ```
 
      */
-    pub fn verse(&self, verse: &str) -> (f64, f64) {
+    pub fn verse(&self, verse: &str) -> Result<(f64, f64), Error> {
         let kind: VerseKind = verse_kind(verse);
         match kind {
-            VerseKind::SingleVerse => self.return_single_verse(verse),
-            VerseKind::RangeVerse => self.return_range_verse(verse),
+            VerseKind::SingleVerse => Ok(self.return_single_verse(verse)?),
+            VerseKind::RangeVerse => Ok(self.return_range_verse(verse)?),
         }
     }
 
     /// Returns a tuple with the _start_ and _end_ time for a singe verse.
-    fn return_single_verse(&self, verse: &str) -> (f64, f64) {
-        self.get_times(self.find_verse_id(format!("{}{}", self.get_prefix(), verse).as_str()))
+    fn return_single_verse(&self, verse: &str) -> Result<(f64, f64), Error> {
+        Ok(self
+            .get_times(self.find_verse_id(format!("{}{}", self.get_prefix()?, verse).as_str())?)?)
     }
 
     /// Returns a tuple with the _start_ and _end_ time for a range of verses.
-    fn return_range_verse(&self, verse: &str) -> (f64, f64) {
-        let range: (&str, &str) = range_split(verse);
+    fn return_range_verse(&self, verse: &str) -> Result<(f64, f64), Error> {
+        let range: (&str, &str) = range_split(verse)?;
+        let start_time: f64 = self.return_single_verse(range.0).unwrap().0;
+        let end_time: f64 = self.return_single_verse(range.1).unwrap().1;
 
-        let start_time: f64 = self.return_single_verse(range.0).0;
-
-        let end_time: f64 = self.return_single_verse(range.1).1;
-        (start_time, end_time)
+        Ok((start_time, end_time))
     }
 
-    /// Searches for the title of the verse and returns the ``id`` of the chapter the title is found.
-    fn find_verse_id(&self, verse: &str) -> i64 {
+    /// Searches for the title of the verse and returns the ``id`` if the chapter the title is found.
+    fn find_verse_id(&self, verse: &str) -> Result<i64, Error> {
         for i in self.chapters.iter() {
             if i.tags.title == verse {
-                return i.id;
+                return Ok(i.id);
             }
         }
-        panic!("The verse was not found");
+
+        Err(Error::VerseNotFound {
+            verse: verse.to_string(),
+        })
     }
 
     /// Returns a tuple of the *start* and *end* time for the chapter in which the *id* has been provided for.
-    fn get_times(&self, id: i64) -> (f64, f64) {
+    fn get_times(&self, id: i64) -> Result<(f64, f64), Error> {
         for i in self.chapters.iter() {
             if i.id == id {
-                return (i.start_time.parse().unwrap(), i.end_time.parse().unwrap());
+                return Ok((i.start_time.parse().unwrap(), i.end_time.parse().unwrap()));
             }
         }
         unreachable!()
     }
 
     /// Returns the last chapter in the file.
-    fn get_last_chapter(&self) -> &Chapter {
-        return self.chapters.last().unwrap();
+    fn get_last_chapter(&self) -> Result<&Chapter, Error> {
+        Ok(self.chapters.last().unwrap())
     }
 
     /**
@@ -232,31 +245,30 @@ impl Root {
     _Joel 1:2_ would match and return the Joel 1:_ as a &str. The prefix is then combined
     with the verse the user wants.
     */
-    fn get_prefix(&self) -> &str {
-        let title = self.get_last_chapter().tags.title.as_str();
+    fn get_prefix(&self) -> Result<&str, Error> {
+        let title = self.get_last_chapter()?.tags.title.as_str();
 
         let pattern = Regex::new(r"(^[\s\S]*:)").unwrap(); // Regular expression to find the prefix (ig. 'Joel 1:') of a `title`. See https://regexr.com/5vus6
         let prefix = pattern.captures(title);
 
         match prefix {
-            Some(prefix) => {
-                return prefix.get(1).unwrap().as_str();
-            }
-            None => panic!("The prefix pattern was not found."),
-        };
+            Some(prefix) => Ok(prefix.get(1).unwrap().as_str()),
+
+            None => Err(Error::PrefixNotMatch),
+        }
     }
 
     /// Returns all the verses' start and end times in a vector.
-    pub fn get_all_verses(&self) -> Vec<(f64, f64)> {
+    pub fn get_all_verses(&self) -> Result<Vec<(f64, f64)>, Error> {
         // let prefix: &str = self.get_prefix(); // Example of prefix: 'John 3:'.
-        let last_verse: i32 = get_verse_from_title(self.get_last_chapter().tags.title.as_str());
+        let last_verse: i32 = get_verse_from_title(self.get_last_chapter()?.tags.title.as_str())?;
         let mut all_verses: Vec<(f64, f64)> = Vec::new(); // tuple of all the start/end times for the entire chapter.
 
         for i in 1..last_verse {
-            all_verses.push(self.verse(&i.to_string()));
+            all_verses.push(self.verse(&i.to_string())?);
         }
 
-        all_verses
+        Ok(all_verses)
     }
 }
 
@@ -269,10 +281,15 @@ assert_eq!(verse, 16i32));
 
 ```
 */
-fn get_verse_from_title(title: &str) -> i32 {
+fn get_verse_from_title(title: &str) -> Result<i32, Error> {
     let v: Vec<&str> = title.split(':').collect();
-    v[1].parse()
-        .expect("Unable to parse verse number from &str to i32.")
+
+    match v[1].parse::<i32>() {
+        Ok(p) => Ok(p),
+        Err(_) => Err(Error::VerseFromTitle {
+            item: String::from(v[1]),
+        }),
+    }
 }
 
 /// Determines whether the verse is single or part of a range.
@@ -284,17 +301,20 @@ fn verse_kind(verse: &str) -> VerseKind {
     }
 }
 
-/**
-Splits the verse range into two parts and returns a tuple (starting_verse, ending_verse).
-
-## Example
-```rust
-assert!(true);
-```
-*/
-fn range_split(verse: &str) -> (&str, &str) {
+/// Splits the verse range into two parts and returns a tuple (starting_verse, ending_verse).
+///
+/// ## Example
+///
+/// ```rust
+///
+/// let verse = "12-15";
+/// let s = range_split(verse).unwrap();
+/// assert_eq!(s, (12, 15));
+///
+/// ```
+fn range_split(verse: &str) -> Result<(&str, &str), Error> {
     let s: Vec<&str> = verse.split('-').collect();
-    (s[0], s[1])
+    Ok((s[0], s[1]))
 }
 
 #[cfg(test)]
@@ -304,81 +324,88 @@ mod tests {
     #[test]
     fn test_get_verse_from_title() {
         let title_0 = "Joel 5:1";
-        assert_eq!(get_verse_from_title(title_0), 1);
+        assert_eq!(get_verse_from_title(title_0).unwrap(), 1);
 
         let title_0 = "John 3:16";
-        assert_eq!(get_verse_from_title(title_0), 16);
+        assert_eq!(get_verse_from_title(title_0).unwrap(), 16);
 
         let title_0 = "Ps. 18:32";
-        assert_eq!(get_verse_from_title(title_0), 32);
+        assert_eq!(get_verse_from_title(title_0).unwrap(), 32);
     }
 
     #[test]
     fn test_verse() {
         let root = init_struct_1();
-        assert_eq!(root.verse("16"), (197.597, 226.259));
-        assert_eq!(root.verse("17"), (226.259, 241.908));
-        assert_eq!(root.verse("25"), (358.658, 374.741));
-        assert_eq!(root.verse("26"), (374.741, 394.561));
+        assert_eq!(root.verse("16").unwrap(), (197.597, 226.259));
+        assert_eq!(root.verse("17").unwrap(), (226.259, 241.908));
+        assert_eq!(root.verse("25").unwrap(), (358.658, 374.741));
+        assert_eq!(root.verse("26").unwrap(), (374.741, 394.561));
     }
 
     #[test]
     #[should_panic]
     fn test_verse_not_found() {
         let root = init_struct_1();
-        assert_eq!(root.verse("27"), (197.597, 226.259));
+        assert_eq!(root.verse("27").unwrap(), (197.597, 226.259));
     }
 
     #[test]
     fn test_range_split_1() {
-        assert_eq!(range_split("5-7"), ("5", "7"));
+        assert_eq!(range_split("5-7").unwrap(), ("5", "7"));
     }
     #[test]
     fn test_range_split_2() {
-        assert_eq!(range_split("5-17"), ("5", "17"));
+        assert_eq!(range_split("5-17").unwrap(), ("5", "17"));
     }
     #[test]
     fn test_range_split_3() {
-        assert_eq!(range_split("15-17"), ("15", "17"));
+        assert_eq!(range_split("15-17").unwrap(), ("15", "17"));
     }
 
     #[test]
     fn test_get_prefix() {
         let r: Root = init_struct_1();
-        assert_eq!(r.get_prefix(), "John 3:");
+        assert_eq!(r.get_prefix().unwrap(), "John 3:");
     }
     #[test]
     fn test_find_verse_id() {
         let r: Root = init_struct_1();
-        let id = r.find_verse_id("John 3:16");
+        let id = r.find_verse_id("John 3:16").unwrap();
         assert_eq!(id, 16);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_find_verse_id_fail() {
+        let r: Root = init_struct_1();
+        let _id = r.find_verse_id("Robert 3:16").unwrap();
     }
     #[test]
     fn test_find_times() {
         let r: Root = init_struct_1();
-        assert_eq!(r.get_times(16), (197.597, 226.259));
+        assert_eq!(r.get_times(16).unwrap(), (197.597, 226.259));
     }
     #[test]
     fn test_return_range_verse() {
         let r: Root = init_struct_1();
-        assert_eq!(r.return_range_verse("16-17"), (197.597, 241.908))
+        assert_eq!(r.return_range_verse("16-17").unwrap(), (197.597, 241.908))
     }
 
     #[test]
     fn test_return_single_verse() {
         let r: Root = init_struct_1();
-        assert_eq!(r.return_single_verse("16"), (197.597, 226.259))
+        assert_eq!(r.return_single_verse("16").unwrap(), (197.597, 226.259))
     }
 
     #[test]
     fn test_verse_single() {
         let r: Root = init_struct_1();
-        assert_eq!(r.verse("16"), (197.597, 226.259))
+        assert_eq!(r.verse("16").unwrap(), (197.597, 226.259))
     }
     #[test]
     fn test_verse_range() {
         let r: Root = init_struct_1();
-        assert_eq!(r.verse("16-17"), (197.597, 241.908))
+        assert_eq!(r.verse("16-17").unwrap(), (197.597, 241.908))
     }
 
     #[test]
@@ -389,7 +416,7 @@ mod tests {
     #[test]
     fn test_last_chapter() {
         let r: Root = init_struct_1();
-        let chapter: &Chapter = r.get_last_chapter();
+        let chapter: &Chapter = r.get_last_chapter().unwrap();
         assert_eq!(chapter.id, 26);
     }
 
@@ -397,7 +424,7 @@ mod tests {
     #[ignore = "Need to finish writing the test."]
     fn test_get_all_verses() {
         let f = init_struct_1();
-        assert_eq!(f.get_all_verses(), vec![(197.597000, 4226.259000)]);
+        assert_eq!(f.get_all_verses().unwrap(), vec![(197.597000, 4226.259000)]);
     }
 
     fn init_struct_1() -> Root {
