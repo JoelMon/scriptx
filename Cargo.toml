@@ -1,6 +1,6 @@
 [package]
 name = "scriptx"
-version = "0.4.9"
+version = "0.4.10"
 authors = ["Joel Montes de Oca"]
 homepage = "https://joelmon.github.io/scriptx/"
 documentation = "https://github.com/JoelMon/scriptx/"
@@ -24,3 +24,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 regex = "1.5"
 indicatif = "0.16.2"
+thiserror = "1.0.31"
