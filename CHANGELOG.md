@@ -1,5 +1,9 @@
 # Changelog
 
+## ScriptX [v0.4.10](https://github.com/JoelMon/scriptx/releases/tag/v0.4.10) (2022-06-26)
+- Improved the error reporting within the probe module
+    - Using the `thiserror` crate to aid with error handing
+
 ## ScriptX [v0.4.9](https://github.com/JoelMon/scriptx/releases/tag/v0.4.9) (2022-04-18)
 - Fixed security vunablity
   - The regex [v1.5.4](https://rustsec.org/advisories/RUSTSEC-2022-0013.html) has a security vunablility that was fixed in v1.5.5. This release updates regex to the patched regex version v1.5.5.
